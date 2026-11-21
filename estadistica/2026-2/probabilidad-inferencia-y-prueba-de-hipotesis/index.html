@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Probabilidad, inferencia y prueba de hipótesis</title>
+<link rel="stylesheet" href="motor/motor.css">
+<link rel="stylesheet" href="clase.css">
+</head>
+<body>
+<!-- Clase 13 de Estadística (2026-2). Contenido: el Word base de la clase
+     (encuesta del 21 nov). Motor: copia fija en motor/ (uso en motor/MOTOR.md). Figuras propias en clase.js.
+     Revisar: uv run ~/Desktop/Cursos/diapositivas-web/herramientas/clase.py revisar <carpeta de la clase> -->
+<main id="lienzo" data-titulo="Probabilidad, inferencia y prueba de hipótesis">
+
+  <!-- 1 Portada -->
+  <section class="diapositiva portada">
+    <h1 class="largo">Probabilidad, inferencia y prueba de hipótesis</h1>
+    <hr class="regla">
+    <p class="pie">Mateo Belalcazar</p>
+  </section>
+
+  <!-- 2 Puente · flechas · foco por pasos · 2 -->
+  <section class="diapositiva">
+    <h2>De la muestra a la población</h2>
+    <p class="ancho">Un estudio mide a un grupo de personas, pero casi siempre busca conclusiones sobre un grupo <b>más amplio</b>. Por eso se distinguen dos tipos de análisis.</p>
+    <ol class="bloque flechas" data-foco>
+      <li><h3>Análisis descriptivo</h3><ul class="lista"><li>Describe la <b>muestra</b>, las personas que respondieron el cuestionario.</li><li>Sus conclusiones se limitan a esas personas.</li><li>Se resume con <b>estadísticos</b> como la media, la desviación estándar o las frecuencias.</li></ul></li>
+      <li><h3>Análisis inferencial</h3><ul class="lista"><li>Busca <b>generalizar</b> a personas que no participaron, por ejemplo, a todos los estudiantes de psicología.</li><li>Usa la muestra para <b>estimar</b> cómo es la <b>población</b>.</li></ul></li>
+    </ol>
+  </section>
+
+  <!-- 3 Actividad ancla · monedas (clase.js) · proceso por clic · 2 -->
+  <section class="diapositiva" id="moneda">
+    <h2>¿Esta moneda está cargada?</h2>
+    <p>Imaginen que lanzamos esta moneda <b>10 veces</b> y salen <b>9 caras</b>.</p>
+    <svg class="fig monedas" viewBox="0 0 1640 300" aria-label="Diez lanzamientos: nueve caras y un sello"></svg>
+    <p class="recuadro" data-paso="2">¿Está cargada? Voten a mano alzada o en el chat y digan <b>por qué</b>.</p>
+  </section>
+
+  <!-- 4 Concepto · recta numérica · los puntos cambian · 3 -->
+  <section class="diapositiva">
+    <h2>¿Qué es la probabilidad?</h2>
+    <ul class="lista ancho">
+      <li>La <b>probabilidad</b> cuantifica qué tan posible es que ocurra un suceso.</li>
+      <li>Se expresa con un número entre <b>0</b> y <b>1</b>. Cuanto más cerca de 1, más probable es.</li>
+      <li>No elimina la <b>incertidumbre</b> sobre el resultado, pero permite cuantificarla.</li>
+    </ul>
+    <figure class="recta" data-de="0" data-a="1" data-marcas="0 0.5 1" data-activa="0; 0.5; 1" data-espera
+            data-rotulos="0=Imposible; 0.5=Puede o no ocurrir; 1=Seguro"></figure>
+    <ul class="bloque linea-lateral" data-foco>
+      <li data-paso="1">Sacar un 7 con un dado. <b><span class="sim">P</span> = 0</b></li>
+      <li data-paso="2">Sacar un número par. <b><span class="sim">P</span> = 0,5</b></li>
+      <li data-paso="3">Sacar un número del 1 al 6. <b><span class="sim">P</span> = 1</b></li>
+    </ul>
+  </section>
+
+  <!-- 5 Concepto · cajas delineadas · foco por pasos · 2 -->
+  <section class="diapositiva">
+    <h2>Experimento aleatorio</h2>
+    <ul class="lista ancho">
+      <li>Un <b>experimento aleatorio</b> es la reproducción controlada de un fenómeno.</li>
+      <li><b>Conocemos de antemano</b> los resultados posibles, pero no podemos predecir <b>cuál saldrá</b> en cada intento.</li>
+    </ul>
+    <ol class="bloque cajas delineadas" data-foco data-columnas="2">
+      <li><h3>Moneda</h3><p class="mono">Ω = {cara, sello}</p><p>Dos resultados posibles en cada lanzamiento.</p></li>
+      <li><h3>Dado</h3><p class="mono">Ω = {1, 2, 3, 4, 5, 6}</p><p>Seis resultados posibles, todos igual de probables.</p></li>
+    </ol>
+    <ul class="lista ancho">
+      <li>El <b>espacio muestral</b> (Ω) es el conjunto de todos los resultados posibles.</li>
+      <li>Es lo primero que se identifica para <b>calcular una probabilidad</b>.</li>
+    </ul>
+  </section>
+
+  <!-- 6 Concepto · cifra grande · contador · 2 -->
+  <section class="diapositiva">
+    <h2>Regla de Laplace</h2>
+    <p class="ancho">Si todos los resultados de un experimento son <b>igual de probables</b>, la probabilidad de un suceso es la proporción de casos que lo cumplen.</p>
+    <div class="cifra laplace"><span class="sim">P</span>(A) = <span class="fraccion"><span>casos favorables</span><span>casos posibles</span></span></div>
+    <div class="pila" data-paso="1">
+      <div class="cifra mediana" data-contar><span class="sim">P</span>(cara) = 1/2 = 0,50</div>
+      <div class="cifra mediana" data-contar><span class="sim">P</span>(sacar un 6) = 1/6 ≈ 0,17</div>
+    </div>
+    <p class="recuadro" data-paso="2">La regla equivale a una <b>frecuencia relativa teórica</b>, porque divide los casos favorables entre el total de casos posibles <b>antes</b> de realizar el experimento.</p>
+  </section>
+
+  <!-- 7 Concepto · máquina de Galton (clase.js) · proceso por clic · 3 -->
+  <section class="diapositiva arriba" id="galton">
+    <h2>La máquina de Galton</h2>
+    <div class="columnas centradas" style="--plantilla: minmax(0, 1fr) 900px">
+      <ul class="lista">
+        <li>Cada clavo es una <b>moneda</b>.</li>
+        <li>Si sale cara, la bola va a la derecha, y si sale sello, a la izquierda.</li>
+        <li>Cada bola pasa por diez clavos, así que es como lanzar <b>diez monedas</b> y contar las caras.</li>
+        <li data-paso="3">Los resultados <b>centrales</b> (4, 5 o 6 caras) son los más frecuentes.</li>
+        <li data-paso="3">Los <b>extremos</b> (0 o 10 caras) son muy poco frecuentes.</li>
+        <li data-paso="3">Con muchas bolas, el histograma se aproxima a una curva en forma de <b>campana</b>.</li>
+      </ul>
+      <svg class="fig galton" viewBox="380 0 880 670" aria-label="Máquina de Galton con el histograma de caras"></svg>
+    </div>
+  </section>
+
+  <!-- 8 Concepto · curva normal (clase.js) · los puntos cambian · 2 -->
+  <section class="diapositiva arriba" id="normal">
+    <h2>La curva normal</h2>
+    <ul class="lista ancho">
+      <li>Muchas medidas tienen esta forma, la <b>distribución normal</b>.</li>
+      <li>La mayoría de las personas queda cerca de la <b>media</b> y, mientras más nos alejamos de ella, hay menos casos.</li>
+      <li>Es <b>simétrica</b>, y en ella la media, la mediana y la moda coinciden.</li>
+    </ul>
+    <svg class="fig normal" viewBox="0 0 1640 430" aria-label="Histograma de datos con la curva normal"></svg>
+  </section>
+
+  <!-- 9 Concepto · diagrama geométrico · trazo que se dibuja · 2 -->
+  <section class="diapositiva">
+    <h2>Población y muestra</h2>
+    <div class="columnas centradas" style="--plantilla: 700px 1fr">
+      <svg class="diagrama poblacion" viewBox="0 0 700 560">
+        <circle cx="350" cy="285" r="262"/>
+        <text x="350" y="92">Población</text>
+        <g data-paso>
+          <circle class="principal" cx="350" cy="380" r="118"/>
+          <text class="principal" x="350" y="358">Muestra</text>
+          <text class="principal it" x="350" y="412">M</text>
+        </g>
+        <g data-paso>
+          <path class="flecha principal" d="M350 262 L350 196"/>
+          <text class="nota inicio" x="370" y="232">estima</text>
+          <text class="it" x="350" y="160">μ</text>
+        </g>
+      </svg>
+      <div class="pila">
+        <ul class="lista">
+          <li>La <b>población</b> es el conjunto completo de personas que nos interesa estudiar.</li>
+          <li>Sus características son <b>parámetros</b> (μ) y casi nunca las conocemos, porque habría que medir a todos.</li>
+          <li>La <b>muestra</b> es la parte de la población que sí medimos.</li>
+          <li>Sus características son <b>estadísticos</b> (<span class="sim">M</span>) y sirven para <b>estimar</b> los parámetros.</li>
+        </ul>
+        <p class="recuadro" data-paso="2">La <b>inferencia</b> usa lo que medimos en la <b>muestra</b> para hablar de toda la <b>población</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 Caso · curvas de grupos (clase.js) · los puntos cambian · 3 + deslizador -->
+  <section class="diapositiva arriba" id="memoria">
+    <h2>Ejemplo: memoria en jóvenes y adultos mayores</h2>
+    <ul class="lista ancho">
+      <li>En un estudio, <b>60 personas</b>, jóvenes y adultos mayores, presentaron una prueba de memoria.</li>
+      <li>La pregunta es si la memoria de los <b class="x">jóvenes</b> difiere de la de los <b class="y">mayores</b>, o si la diferencia entre sus medias puede deberse al <b>azar</b> del muestreo.</li>
+    </ul>
+    <div class="columnas lado-control">
+      <svg class="fig curvas" viewBox="0 0 1100 470" aria-label="Curvas de memoria de jóvenes y mayores"></svg>
+      <div class="pila">
+        <div class="control"><span class="rotulo-control">Diferencia de medias</span>
+          <div class="cifra mediana dif">9,3</div>
+          <input type="range" class="deslizador" min="0" max="24" step="0.1" value="9.3" aria-label="Diferencia de medias"></div>
+        <ul class="lista">
+          <li data-paso="2">Cuando las curvas se <b>solapan</b> mucho, la diferencia entre las medias podría deberse al <b>azar</b>.</li>
+          <li data-paso="2">Cuando se <b>separan</b>, es más difícil atribuirla al azar.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 Puente · tabla · foco por pasos · 2 -->
+  <section class="diapositiva">
+    <h2>Tipos de hipótesis</h2>
+    <p class="ancho">Según la pregunta, una hipótesis <b>compara grupos</b> o <b>relaciona variables</b>, y puede indicar o no la <b>dirección</b> que se espera.</p>
+    <table class="tabla" data-foco>
+      <thead><tr><th></th><th>Sin dirección</th><th>Con dirección</th></tr></thead>
+      <tbody>
+        <tr><td><b>Comparación</b></td><td>El grupo 1 es <b>diferente</b> al grupo 2 en X</td><td>El grupo 1 tiene <b>más</b> X que el grupo 2</td></tr>
+        <tr><td><b>Relación</b></td><td>X <b>se relaciona</b> con Y</td><td>A <b>mayor</b> X, <b>mayor</b> (o menor) Y</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 12 Concepto · cajas con línea lateral · foco por pasos · 2 -->
+  <section class="diapositiva">
+    <h2>La hipótesis de investigación</h2>
+    <ul class="lista ancho">
+      <li>Es una <b>respuesta provisional</b> a la pregunta de investigación.</li>
+      <li>Predice cómo se relacionan dos o más variables y se pone a <b>prueba</b> con datos.</li>
+      <li>Guía el diseño del estudio, la recolección de los datos y la <b>elección de la prueba</b> estadística.</li>
+    </ul>
+    <ul class="bloque cajas con-linea" data-foco data-columnas="1">
+      <li><h3>Pregunta</h3><p>¿El rendimiento académico se relaciona con el nivel educativo de los padres?</p></li>
+      <li><h3>Hipótesis</h3><p>A <b>mayor</b> nivel educativo de los padres, <b>mayor</b> rendimiento académico.</p></li>
+    </ul>
+  </section>
+
+  <!-- 13 Actividad · instrucciones · 0 -->
+  <section class="diapositiva">
+    <h2>Ejercicio: de la pregunta a la hipótesis</h2>
+    <p>Por parejas, escriban la <b>hipótesis de investigación</b> de cada pregunta.</p>
+    <ol class="instrucciones">
+      <li>¿El tiempo en redes sociales se relaciona con la calidad del sueño?</li>
+      <li>¿El estrés académico es distinto entre quienes trabajan y quienes no?</li>
+      <li>¿El tipo de colegio se relaciona con la carrera que se elige?</li>
+    </ol>
+  </section>
+
+  <!-- 14 Concepto · cajas sólidas · foco por pasos · 3 -->
+  <section class="diapositiva">
+    <h2>Hipótesis estadísticas</h2>
+    <p class="ancho">En estadística, las hipótesis se escriben como afirmaciones sobre la <b>población</b> y siempre se plantean en un <b>par complementario</b>.</p>
+    <ol class="bloque cajas" data-foco data-columnas="2">
+      <li><h3>H<sub>0</sub>, hipótesis nula</h3><p>Es lo que se supone <b>cierto al inicio</b>. Dice que <b>no hay</b> diferencia o que <b>no hay</b> relación entre las variables.</p></li>
+      <li><h3>H<sub>1</sub>, hipótesis alternativa</h3><p>Es la afirmación <b>contraria</b> a H<sub>0</sub>. Recoge lo que el investigador <b>espera</b> encontrar y lo que busca respaldar con los datos.</p></li>
+    </ol>
+    <p class="recuadro" data-paso>Como en un <b>juicio</b>, el acusado es <b>inocente</b> (H<sub>0</sub>) hasta que las <b>pruebas</b> digan lo contrario. En la investigación, esas pruebas son los <b>datos</b> de la muestra.</p>
+  </section>
+
+  <!-- 15 Concepto · tabla · foco por pasos · 3 · burbuja en cada signo -->
+  <section class="diapositiva">
+    <h2>La regla para escribirlas</h2>
+    <ul class="lista ancho">
+      <li>H<sub>0</sub> siempre lleva el <b>=</b>, porque dice que no hay diferencia.</li>
+      <li>H<sub>1</sub> lleva <b>≠</b> si la hipótesis no tiene dirección, y <b>&gt;</b> o <b>&lt;</b> si dice cuál grupo es mayor.</li>
+    </ul>
+    <table class="tabla regla" data-foco>
+      <thead><tr><th></th><th>H<sub>0</sub></th><th>H<sub>1</sub></th></tr></thead>
+      <tbody>
+        <tr><td>Comparación sin dirección</td>
+          <td class="mono"><span data-explica="la media de la población 1">μ<sub>1</sub></span> <span data-explica="las medias son iguales">=</span> μ<sub>2</sub></td>
+          <td class="mono">μ<sub>1</sub> <span data-explica="las medias son distintas">≠</span> μ<sub>2</sub></td></tr>
+        <tr><td>Comparación con dirección</td>
+          <td class="mono">μ<sub>1</sub> <span data-explica="las medias son iguales">=</span> μ<sub>2</sub></td>
+          <td class="mono">μ<sub>1</sub> <span data-explica="la media del grupo 1 es mayor">&gt;</span> μ<sub>2</sub></td></tr>
+        <tr><td>Relación</td><td>No hay relación</td><td>Hay relación entre X y Y</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 16 Caso · línea lateral con foco · foco por pasos · 3 -->
+  <section class="diapositiva">
+    <h2>Hipótesis del ejemplo de memoria</h2>
+    <ul class="bloque linea-lateral" data-foco>
+      <li><b>Hipótesis de investigación.</b> La memoria de los <b class="x">jóvenes</b> es <b>distinta</b> de la de los <b class="y">mayores</b>.</li>
+      <li><b>H<sub>0</sub>.</b> <span class="mono">μ <span class="x">jóvenes</span> = μ <span class="y">mayores</span></span>. La memoria es <b>igual</b> en los dos grupos.</li>
+      <li><b>H<sub>1</sub>.</b> <span class="mono">μ <span class="x">jóvenes</span> ≠ μ <span class="y">mayores</span></span>. La memoria es <b>distinta</b>.</li>
+    </ul>
+  </section>
+
+  <!-- 17 Retorno · barras binomiales (clase.js) · los puntos cambian · 3 -->
+  <section class="diapositiva arriba" id="binomial">
+    <h2>El valor <span class="sim">p</span> como área</h2>
+    <ul class="lista ancho">
+      <li>Si la moneda está <b>equilibrada</b> (H<sub>0</sub>), así se reparten las caras en 10 lanzamientos.</li>
+      <li>El <b>área</b> sombreada es la probabilidad de un resultado igual de extremo o más.</li>
+    </ul>
+    <div class="columnas lado-control ancho-lado">
+      <svg class="fig binomial" viewBox="0 0 1060 470" aria-label="Probabilidad de 0 a 10 caras"></svg>
+      <ul class="lista">
+        <li data-paso="2"><b>9 caras en 10 lanzamientos.</b> Un resultado así o más extremo aparece en 2 de cada 100 series (área = <b>0,02</b>). Es poco probable bajo H<sub>0</sub> y da razones para <b>dudar</b> de ella.</li>
+        <li data-paso="3"><b>6 caras en 10 lanzamientos.</b> Un resultado así o más extremo aparece en 75 de cada 100 series (área = <b>0,75</b>). Es esperable bajo H<sub>0</sub> y <b>no da razones</b> para dudar de ella.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 18 Retorno · curvas de grupos y curva del azar (clase.js) · los puntos cambian · 2 + deslizador -->
+  <section class="diapositiva arriba" id="azar">
+    <h2>La diferencia observada frente al azar</h2>
+    <div class="columnas" style="--plantilla: 1000px minmax(0, 1fr)">
+      <div class="pila">
+        <svg class="fig curvas-azar" viewBox="0 0 1100 520" aria-label="Curvas de los grupos y curva del azar"></svg>
+        <ul class="lista">
+          <li>Si <b>H<sub>0</sub></b> fuera cierta, las diferencias que salen <b>por azar</b> se reparten así, alrededor de <b>0</b>.</li>
+          <li>La diferencia real se compara con esa curva.</li>
+        </ul>
+      </div>
+      <div class="pila lado-texto">
+        <div class="control"><span class="rotulo-control">Diferencia de medias</span>
+          <div class="cifra mediana dif">9,3</div>
+          <input type="range" class="deslizador" min="0" max="24" step="0.1" value="9.3" aria-label="Diferencia de medias"></div>
+        <div class="control" data-paso="2"><span class="rotulo-control">Área de las dos colas</span>
+          <div class="cifra mediana principal area-valor">&lt; 0,001</div></div>
+        <ul class="lista">
+          <li data-paso="2">La diferencia observada, <b>9,3 puntos</b>, queda lejos del centro de la curva.</li>
+          <li data-paso="2">Si H<sub>0</sub> fuera cierta, una diferencia así de grande, o mayor, aparecería en <b>menos de 1 de cada 1.000</b> muestras.</li>
+          <li data-paso="2">Los datos apoyan <b>H<sub>1</sub></b>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 Actividad · reporte 3 en clase · 2 -->
+  <section class="diapositiva" id="reporte">
+    <h2>Reporte 3 en clase</h2>
+    <div class="columnas centradas" style="--plantilla: 1fr 860px">
+      <div class="pila">
+        <p>Por equipos, sobre su proyecto.</p>
+        <ol class="instrucciones">
+          <li>Escriban su <b>hipótesis de investigación</b>.</li>
+          <li>Escriban <b>H<sub>0</sub> y H<sub>1</sub></b> con la regla.</li>
+          <li>Llenen la <b>tabla resumen</b> de la E3.</li>
+        </ol>
+        <p>Lo terminan y lo entregan el <b>domingo 29</b>.</p>
+      </div>
+      <div class="pila">
+        <table class="tabla pruebas" data-paso="1">
+          <thead><tr><th>Tipo de análisis</th><th>Paramétrica</th><th>No paramétrica</th></tr></thead>
+          <tbody>
+            <tr><td>Comparación de 2 grupos</td><td>t de Student</td><td>U de Mann-Whitney</td></tr>
+            <tr><td>Comparación de 3 o más grupos</td><td>ANOVA</td><td>Kruskal-Wallis</td></tr>
+            <tr><td>Dos cualitativas</td><td>—</td><td>Chi cuadrado (χ²)</td></tr>
+            <tr><td>Dos cuantitativas</td><td>Pearson</td><td>Spearman</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 Síntesis · cajas con número · foco por pasos · 4 -->
+  <section class="diapositiva">
+    <h2>Síntesis</h2>
+    <ol class="bloque cajas numeradas" data-foco>
+      <li><p>La <b>probabilidad</b> cuantifica, entre 0 y 1, qué tan <b>posible</b> es un resultado.</p></li>
+      <li><p>La <b>inferencia</b> usa la <b>muestra</b> para hablar de la <b>población</b>.</p></li>
+      <li><p><b>H<sub>0</sub></b> afirma que no hay diferencia. Si lo observado sería muy <b>poco probable</b> en caso de que H<sub>0</sub> fuera cierta, los datos apoyan <b>H<sub>1</sub></b>.</p></li>
+    </ol>
+    <p class="nota" data-paso>El <b>valor <span class="sim">p</span></b> y el criterio de decisión de <b>0,05</b> se estudian en la siguiente sesión.</p>
+  </section>
+
+  <!-- 21 Referencias -->
+  <section class="diapositiva">
+    <h2>Referencias</h2>
+    <ul class="referencias">
+      <li>Bologna, E. (2011). <i>Estadística para psicología y educación</i>. Editorial Brujas.</li>
+      <li>Navarro, D. J., Foxcroft, D. R. y Faulkenberry, T. J. (2025). <i>Aprendiendo estadística con jamovi</i>.</li>
+    </ul>
+  </section>
+
+</main>
+<script src="motor/vendor/gsap.min.js"></script>
+<script src="motor/motor.js"></script>
+<script src="motor/objetos.js"></script>
+<script src="datos/clase13.js"></script>
+<script src="clase.js"></script>
+</body>
+</html>

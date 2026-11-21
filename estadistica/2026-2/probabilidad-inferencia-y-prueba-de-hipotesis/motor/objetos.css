@@ -1,0 +1,183 @@
+/* objetos.css: los objetos del sistema (OBJETOS-GAMMA.md).
+   El bloque es UN solo objeto con pieles: la misma lista <ol class="bloque …"> cambia de forma
+   según su clase (cajas, linea-lateral, etapas, flechas, linea-tiempo, ciclo, piramide, embudo,
+   escalera, anillos, barras, puntos, burbujas). Las demás piezas: recta, diagrama, cita, temporizador. */
+
+/* ===================== bloque: lo común ===================== */
+.bloque {
+  --c: var(--principal); --c-relleno: var(--principal-relleno); --c-medio: var(--principal-medio); --c-tinte: var(--principal-tinte);
+  list-style: none; position: relative; font: 400 32px/1.4 var(--sans);
+}
+.bloque.secundario, .bloque > li.secundario {
+  --c: var(--secundario); --c-relleno: var(--secundario-relleno); --c-medio: var(--secundario-medio); --c-tinte: var(--secundario-tinte);
+}
+.bloque > li { position: relative; min-width: 0; }
+.bloque h3 { font: 600 40px/1.2 var(--serif); letter-spacing: -.005em; }
+.bloque p { font: inherit; max-width: none; }
+.bloque h3 + p, .bloque p + p { margin-top: 12px; }
+.bloque b { font-weight: 700; }
+/* Emphasize sin pasos: las demás celdas bajan a texto secundario */
+.bloque[data-foco="mover"].hay-foco > li:not(.es-foco) { color: var(--tinta-2); }
+
+/* columnas: --n lo pone el motor (data-columnas lo cambia) */
+.bloque.cajas, .bloque.etapas, .bloque.flechas, .bloque.anillos, .bloque.linea-tiempo:not(.vertical) {
+  display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr));
+}
+
+/* ===================== cajas (sólidas, delineadas, con-linea, numeradas) ===================== */
+.bloque.cajas { gap: 32px; }
+.cajas > li { background: var(--c-tinte); border: 1px solid var(--c-medio); border-radius: 8px; padding: 40px 44px 44px; transition: background-color .35s, border-color .35s, color .35s; }
+.cajas > li.es-foco { background: var(--c-relleno); border-color: var(--c-relleno); }
+.cajas.delineadas > li { background: transparent; border: 2px solid var(--c-medio); }
+.cajas.delineadas > li.es-foco { background: var(--c-tinte); border-color: var(--c); }
+.cajas.con-linea > li { background: transparent; border: 2px solid var(--c-medio); border-left: 0; border-radius: 0 8px 8px 0; padding-left: 46px; }
+.cajas.con-linea > li.es-foco { background: var(--c-tinte); }
+.cajas.con-linea > li > .barra { position: absolute; left: 0; top: -2px; bottom: -2px; width: 8px; background: var(--c); transform-origin: top; }
+.cajas .marca { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--c); color: #fff; font: 500 28px/1 var(--mono); margin-bottom: 22px; }
+
+/* ===================== texto con línea lateral (lista sobria con foco) ===================== */
+.bloque.linea-lateral { font-size: 36px; max-width: 1400px; }
+.linea-lateral > li { padding: 6px 0 6px 34px; }
+.linea-lateral > li + li { margin-top: 30px; }
+.linea-lateral > li > .barra { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; border-radius: 3px; background: var(--c); transform-origin: top; transition: background-color .35s; }
+.linea-lateral[data-foco] > li > .barra { background: var(--linea); }
+.linea-lateral[data-foco] > li.es-foco > .barra { background: var(--c); }
+
+/* ===================== etapas (la línea avanza de columna en columna) ===================== */
+.bloque.etapas { column-gap: 40px; }
+.etapas .num { display: block; font: 500 34px/1 var(--mono); color: var(--c); }
+.etapas .trazo { display: block; position: relative; height: 4px; margin: 20px 0 28px; border-radius: 2px; background: var(--linea); }
+.etapas .trazo > i { position: absolute; inset: 0; border-radius: 2px; background: var(--c); transform-origin: left; }
+
+/* ===================== flechas (chevrones: antecedente → conducta → consecuencia) ===================== */
+.bloque.flechas { column-gap: 10px; }
+.flechas .forma { display: flex; align-items: center; gap: 18px; height: 140px; padding: 0 60px 0 76px; background: var(--c-tinte); transition: background-color .35s;
+  clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 50%, calc(100% - 44px) 100%, 0 100%, 44px 50%); }
+.flechas > li:first-child .forma { clip-path: polygon(0 0, calc(100% - 44px) 0, 100% 50%, calc(100% - 44px) 100%, 0 100%); padding-left: 36px; }
+.flechas .forma .marca { font: 500 28px/1 var(--mono); color: var(--c); }
+.flechas .forma h3 { font-size: 40px; }
+.flechas > li > p, .flechas > li > .cuerpo { margin-top: 26px; padding: 0 44px 0 36px; }
+.flechas > li.es-foco .forma { background: var(--c-relleno); }
+.flechas > li.es-foco .marca { color: var(--tinta); }
+
+/* ===================== línea de tiempo (horizontal o .vertical) ===================== */
+.bloque.linea-tiempo { column-gap: 40px; }
+.linea-tiempo > .eje { position: absolute; left: 0; right: 0; top: 67px; height: 3px; border-radius: 2px; background: var(--c-medio); transform-origin: left; }
+.linea-tiempo .rotulo { display: block; height: 44px; font: 500 34px/1 var(--mono); color: var(--c); }
+.linea-tiempo .punto { display: block; position: relative; z-index: 1; width: 24px; height: 24px; margin: 12px 0 30px; border-radius: 50%; background: var(--fondo); border: 4px solid var(--c); transition: background-color .35s, box-shadow .35s; }
+.linea-tiempo > li.es-foco .punto { background: var(--c); box-shadow: 0 0 0 8px var(--c-tinte); }
+.linea-tiempo.vertical > li { display: grid; grid-template-columns: var(--rotulo, 150px) 24px minmax(0, 1fr); column-gap: 36px; align-items: start; }
+.linea-tiempo.vertical > li + li { margin-top: 40px; }
+.linea-tiempo.vertical .rotulo { height: auto; text-align: right; padding-top: 4px; }
+.linea-tiempo.vertical .punto { margin: 6px 0 0; }
+.linea-tiempo.vertical > .eje { left: calc(var(--rotulo, 150px) + 46.5px); right: auto; top: 18px; bottom: 18px; width: 3px; height: auto; transform-origin: top; }
+
+/* ===================== ciclo (dona de sectores en flecha + lista numerada) ===================== */
+.bloque.ciclo { display: grid; grid-template-columns: 600px minmax(0, 1fr); grid-template-rows: repeat(var(--filas), auto); column-gap: 88px; row-gap: 36px; align-content: center; align-items: center; }
+.ciclo > svg { grid-column: 1; grid-row: 1 / span var(--filas); width: 600px; height: 600px; overflow: visible; }
+.ciclo > li { grid-column: 2; display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 28px; align-items: start; }
+.ciclo > li > .marca { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--c-tinte); color: var(--c); font: 500 28px/1 var(--mono); transition: background-color .35s, color .35s; }
+.ciclo > li.es-foco > .marca { background: var(--c); color: #fff; }
+.ciclo .forma-sector { fill: var(--c-tinte); transition: fill .35s; }
+.ciclo .es-foco > .forma-sector { fill: var(--c-relleno); }
+.ciclo .sector-num { fill: var(--c); font: 500 34px var(--mono); text-anchor: middle; dominant-baseline: central; transition: fill .35s; }
+.ciclo .es-foco > .sector-num { fill: var(--tinta); }
+.ciclo .centro { fill: var(--tinta); font: 600 38px var(--serif); text-anchor: middle; dominant-baseline: central; }
+
+/* ===================== pirámide y embudo (franjas + texto a la derecha) ===================== */
+.bloque.piramide, .bloque.embudo { display: grid; grid-template-columns: var(--ancho-figura, 620px) minmax(0, 1fr); grid-template-rows: repeat(var(--filas), minmax(0, 1fr)); column-gap: 64px; height: var(--alto, 600px); }
+.piramide > svg, .embudo > svg { grid-column: 1; grid-row: 1 / span var(--filas); width: 100%; height: 100%; overflow: visible; }
+.piramide > li, .embudo > li { grid-column: 2; align-self: center; }
+.piramide .franja, .embudo .franja { fill: var(--c-tinte); transition: fill .35s; }
+.piramide .franja.es-foco, .embudo .franja.es-foco { fill: var(--c-relleno); }
+
+/* ===================== escalera (peldaños que se ensanchan) ===================== */
+.escalera > li { display: flex; align-items: center; column-gap: 36px; }
+.escalera > li + li { margin-top: 16px; }
+.escalera .peldano { flex: none; display: flex; align-items: center; width: calc(var(--k) / var(--n-celdas) * var(--ancho, 600px)); height: 116px; padding-left: 26px; border-radius: 6px; background: var(--c-tinte); font: 500 30px/1 var(--mono); color: var(--c); transform-origin: left; transition: background-color .35s, color .35s; }
+.escalera > li.es-foco .peldano { background: var(--c-relleno); color: var(--tinta); }
+
+/* ===================== números: anillos, barras y cuadrícula de puntos ===================== */
+.unidad { font-size: .55em; margin-left: .14em; letter-spacing: 0; }
+
+.bloque.anillos { column-gap: 48px; justify-items: center; text-align: center; }
+.anillos .anillo { position: relative; width: 300px; height: 300px; margin-bottom: 34px; }
+.anillos .anillo svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.anillos .pista { fill: none; stroke: var(--linea); stroke-width: 20; }
+.anillos .arco { fill: none; stroke: var(--c); stroke-width: 20; }
+.anillos .centro-anillo { position: absolute; inset: 0; display: grid; place-items: center; }
+.anillos .valor { font: 500 64px/1 var(--mono); letter-spacing: -.03em; }
+.anillos .cuerpo { max-width: 470px; }
+
+.barras > li { display: grid; grid-template-columns: var(--ancho-rotulo, 440px) minmax(0, 1fr) 190px; column-gap: 40px; align-items: center; }
+.barras > li + li { margin-top: 40px; }
+.barras h3 { font-size: 38px; }
+.barras .cuerpo p { font-size: 28px; color: var(--tinta-2); margin-top: 4px; }
+.barras .pista { position: relative; height: 36px; border-radius: 4px; background: var(--linea); overflow: hidden; }
+.barras .lleno { position: absolute; left: 0; top: 0; bottom: 0; background: var(--c); transform-origin: left; }
+.barras .valor { font: 500 52px/1 var(--mono); letter-spacing: -.03em; text-align: right; }
+
+.bloque.puntos { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); gap: 56px; }
+.puntos > li { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 72px; align-items: center; }
+.puntos .rejilla { display: block; width: var(--lado, 520px); height: auto; overflow: visible; }
+.puntos .vacio { fill: var(--linea); }
+.puntos .lleno { fill: var(--c); }
+.puntos .valor { display: block; margin-bottom: 22px; font: 500 150px/1 var(--mono); letter-spacing: -.03em; color: var(--c); }
+
+/* ===================== burbujas de diálogo (dos voces, dos colores) ===================== */
+.bloque.burbujas { display: flex; flex-direction: column; gap: 30px; font-size: 34px; }
+.burbujas > li { align-self: flex-start; max-width: 72%; padding: 22px 32px 24px; border-radius: 22px 22px 22px 4px; background: var(--principal-tinte); transform-origin: left bottom; }
+.burbujas > li::before { content: ""; position: absolute; left: -14px; bottom: 0; width: 28px; height: 22px; background: inherit; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+.burbujas > li.voz-2 { align-self: flex-end; border-radius: 22px 22px 4px 22px; background: var(--secundario-tinte); transform-origin: right bottom; }
+.burbujas > li.voz-2::before { left: auto; right: -14px; clip-path: polygon(0 0, 100% 100%, 0 100%); }
+.burbujas .quien { display: block; margin-bottom: 10px; font: 600 24px/1 var(--sans); color: var(--principal); letter-spacing: .01em; }
+.burbujas .voz-2 .quien { color: var(--secundario); }
+
+/* ===================== cita de autor ===================== */
+.cita { position: relative; max-width: 1480px; padding: 70px 84px 56px; border: 2px solid var(--principal-medio); border-radius: 8px; }
+.cita p { font: italic 400 44px/1.4 var(--serif); max-width: none; }
+.cita cite { display: block; margin-top: 30px; font: 400 28px/1.3 var(--sans); font-style: normal; color: var(--tinta-2); }
+.cita .comillas { position: absolute; height: 76px; padding: 0 16px; background: var(--fondo); font: 600 150px/1 var(--serif); color: var(--principal); }
+.cita .abre { left: 44px; top: -24px; }
+.cita .cierra { right: 44px; bottom: -52px; }
+
+/* ===================== recta numérica ===================== */
+.recta { position: relative; width: 100%; height: 150px; }
+.recta > svg { position: absolute; left: 0; top: 0; width: 100%; height: 120px; overflow: visible; }
+.recta .eje { fill: none; stroke: var(--tinta); stroke-width: 3; }
+.recta .marca-mayor { stroke: var(--tinta); stroke-width: 3; }
+.recta .marca-menor { stroke: var(--tinta-2); stroke-width: 2; }
+.recta .numero { fill: var(--tinta-2); font: 400 24px var(--mono); }
+.recta .activa { stroke: var(--principal); stroke-width: 14; }
+.recta .activa-punto { fill: var(--principal); }
+.recta .zona { position: absolute; top: 100px; font: 400 25px/1 var(--sans); color: var(--tinta-2); transform: translateX(-50%); white-space: nowrap; transition: color .2s; }
+.recta .zona.on { color: var(--tinta); font-weight: 700; }
+
+/* ===================== diagrama geométrico (SVG escrito a mano en la clase) ===================== */
+svg.diagrama { display: block; width: 100%; height: auto; overflow: visible; }
+.diagrama :is(rect, path, line, circle, ellipse, polyline, polygon) { fill: none; stroke: var(--tinta); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.diagrama rect { rx: 6px; }
+.diagrama .principal { stroke: var(--principal); }
+.diagrama .secundario { stroke: var(--secundario); }
+.diagrama .tenue { stroke: var(--tinta-2); }
+.diagrama .grueso { stroke-width: 6; }
+.diagrama .relleno { fill: var(--principal-tinte); stroke: none; }
+.diagrama .relleno.secundario { fill: var(--secundario-tinte); }
+.diagrama .flecha { stroke-linecap: butt; }
+.diagrama .punta { fill: var(--tinta); stroke: none; }
+.diagrama .punta.principal { fill: var(--principal); }
+.diagrama .punta.secundario { fill: var(--secundario); }
+.diagrama .punta.tenue { fill: var(--tinta-2); }
+.diagrama text { fill: var(--tinta); stroke: none; font: 400 40px var(--serif); text-anchor: middle; dominant-baseline: central; }
+.diagrama text.principal { fill: var(--principal); font-weight: 600; }
+.diagrama text.secundario { fill: var(--secundario); font-weight: 600; }
+.diagrama text.nota { fill: var(--tinta-2); font: italic 400 26px var(--sans); }
+.diagrama text.inicio { text-anchor: start; }
+.diagrama text.fin { text-anchor: end; }
+
+/* ===================== temporizador de la actividad ===================== */
+.temporizador { display: inline-flex; flex-direction: column; gap: 16px; cursor: pointer; user-select: none; }
+.temporizador .t { font: 500 120px/1 var(--mono); letter-spacing: -.03em; }
+.temporizador .barra-t { display: block; height: 6px; border-radius: 3px; background: var(--linea); overflow: hidden; }
+.temporizador .barra-t > i { display: block; height: 100%; background: var(--principal); transform-origin: left; }
+.temporizador.fin .t { color: var(--principal); }

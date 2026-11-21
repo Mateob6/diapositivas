@@ -1,0 +1,88 @@
+/* clase.css: la disposición de las figuras propias de la clase 13 (clase.js).
+   Los colores salen siempre de motor/paleta.css; aquí no se escribe ningún color. */
+
+/* ── figuras: lo común ── */
+.fig { display: block; width: 100%; height: auto; overflow: visible; }
+.fig text { font: 400 24px var(--mono); fill: var(--tinta-2); text-anchor: middle; dominant-baseline: central; }
+.fig text.inicio { text-anchor: start; }
+.fig text.fin { text-anchor: end; }
+.fig text.rot { font: 400 25px var(--sans); }
+.fig .eje { fill: none; stroke: var(--tinta); stroke-width: 2.5; }
+.fig .tick { stroke: var(--tinta); stroke-width: 2; }
+
+/* ── D3 · monedas ── */
+.monedas .moneda circle { stroke-width: 5; }
+.monedas .cara circle { fill: var(--principal); stroke: var(--principal); }
+.monedas .sello circle { fill: var(--fondo); stroke: var(--secundario); }
+.monedas .letra { font: 600 56px var(--serif); }
+.monedas .cara .letra { fill: var(--fondo); }
+.monedas .sello .letra { fill: var(--secundario); }
+.monedas .conteo { font: 500 44px var(--mono); fill: var(--tinta); }
+
+/* ── D6 · regla de Laplace ── */
+.cifra.laplace { font-size: 96px; }
+
+/* ── D7 · máquina de Galton ── */
+svg.galton { width: 900px; }
+.galton .clavo { fill: var(--tinta-2); }
+.galton .divisor { stroke: var(--linea); stroke-width: 3; }
+.galton .bola { fill: var(--principal); }
+.galton .barra { fill: var(--principal-tinte); stroke: var(--principal-medio); stroke-width: 1.5; }
+.galton .campana { fill: none; stroke: var(--principal); stroke-width: 5; stroke-linecap: round; }
+.galton .letra-gal { font: 600 22px var(--sans); }
+.galton .l-cara { fill: var(--principal); }
+.galton .l-sello { fill: var(--secundario); }
+
+/* ── D8 · la curva normal ── */
+.normal .punto { fill: var(--tinta-2); fill-opacity: .75; }
+.normal .campana { fill: none; stroke: var(--principal); stroke-width: 5; stroke-linecap: round; }
+.normal .banda-1 { fill: var(--principal-tinte); }
+.normal .banda-2 { fill: var(--principal-tinte); fill-opacity: .45; }
+.normal .media { stroke: var(--principal); stroke-width: 3; stroke-dasharray: 8 8; }
+.normal .rot-banda { font: 600 26px var(--sans); fill: var(--principal); }
+.normal .rot-media { font: italic 400 30px var(--serif); fill: var(--principal); }
+.normal .titulo-ej { font: 600 30px var(--sans); fill: var(--tinta); }
+.normal .nota-fig { font: italic 400 24px var(--sans); fill: var(--tinta-2); }
+
+/* ── D9 · población y muestra ── */
+.diagrama text.it { font-style: italic; font-size: 50px; }
+
+/* ── D10 y D18 · curvas de los grupos (jóvenes en el principal, mayores en el secundario) ── */
+.fig .area { mix-blend-mode: multiply; }
+.fig .area.x { fill: var(--principal-tinte); }
+.fig .area.y { fill: var(--secundario-tinte); }
+.fig .curva { fill: none; stroke-width: 5; stroke-linejoin: round; }
+.fig .curva.x { stroke: var(--principal); }
+.fig .curva.y { stroke: var(--secundario); }
+.fig .media-g { stroke-width: 3; stroke-dasharray: 8 8; }
+.fig .media-g.x { stroke: var(--principal); }
+.fig .media-g.y { stroke: var(--secundario); }
+.fig .nombre-g { font: 600 28px var(--sans); }
+.fig .nombre-g.x { fill: var(--principal); }
+.fig .nombre-g.y { fill: var(--secundario); }
+.fig .valor-g { font: 500 24px var(--mono); fill: var(--tinta); }
+.lado-control { --plantilla: minmax(0, 1fr) 480px; align-items: center; }
+.lado-control.ancho-lado { --plantilla: minmax(0, 1fr) 560px; }
+/* en las columnas laterales la lista va a 32 px (no menos) */
+.lado-control .lista > li, .lado-texto .lista > li { font-size: 32px; }
+
+/* ── D17 · barras de 0 a 10 caras ── */
+.binomial .barra { fill: var(--principal-tinte); stroke: var(--principal-medio); stroke-width: 1.5; transition: fill .35s; }
+.binomial .barra.marcada { fill: var(--principal); stroke: var(--principal); }
+.binomial .flechita { fill: var(--tinta); }
+.binomial .rot-marcador { font: 600 28px var(--sans); fill: var(--tinta); }
+
+/* ── D18 · la curva del azar ── */
+.fig .area-azar { fill: var(--linea); }
+.fig .curva-azar { fill: none; stroke: var(--tinta); stroke-width: 4; }
+.fig .cola { fill: var(--principal); }
+.fig .marca-dif { stroke: var(--principal); stroke-width: 4; }
+.fig .marca-dif.espejo { stroke-dasharray: 8 8; stroke-opacity: .6; }
+.fig .valor-dif { font: 600 28px var(--mono); fill: var(--principal); }
+
+/* ── D15 · la regla ── */
+.tabla.regla td.mono { font-size: 36px; }
+
+/* ── D19 · reporte 3 ── */
+#reporte .tabla { font-size: 30px; }
+#reporte .tabla th, #reporte .tabla td { padding: 16px 18px; }

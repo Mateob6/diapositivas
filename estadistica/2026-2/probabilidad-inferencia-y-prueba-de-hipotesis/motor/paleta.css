@@ -1,0 +1,38 @@
+/* paleta.css: la paleta única del sistema (DECISIONES.md, decidida «por ahora»).
+   Es el único lugar donde están los colores. El CSS los usa con var(--nombre) y el
+   JavaScript los lee con Motor.color('nombre'), así que cambiar la paleta es cambiar
+   este archivo y nada más.
+
+   Contraste (WCAG) verificado sobre el fondo y los tintes:
+     tinta / fondo 13,9 · tinta-2 / fondo 6,5 · principal / fondo 5,7 · secundario / fondo 6,4
+     tinta / principal-tinte 12,0 · tinta-2 / principal-tinte 5,6 · principal / principal-tinte 4,9
+     tinta / principal-relleno 8,2 · tinta / secundario-relleno 8,4 · blanco / principal 6,0
+   Sobre los rellenos solo va tinta (tinta-2 da 3,8). */
+
+:root {
+  /* neutros */
+  --fondo: #FBF8F4;
+  --tinta: #2A2633;
+  --tinta-2: #5E5866;            /* texto secundario, ejes, notas */
+  --linea: #E6DDD3;              /* ejes abstractos, pistas, divisores */
+
+  /* principal: el foco y la variable X */
+  --principal: #A8431F;          /* terracota: texto, borde, flecha, marcador */
+  --principal-relleno: #FFAD94;  /* la celda en foco (solo con tinta encima) */
+  --principal-medio: #E8B6A2;    /* contornos de cajas delineadas, ejes de objetos */
+  --principal-tinte: #FCE3D8;    /* superficies: cajas, recuadros, etiquetas */
+
+  /* secundario: la variable Y y el contraste */
+  --secundario: #2F6178;
+  --secundario-relleno: #A3C9DA;
+  --secundario-medio: #A9C3CF;
+  --secundario-tinte: #DDEAF0;
+
+  /* lo que ya no es foco baja a esta opacidad (foco por pasos). Se sigue leyendo; el foco se nota por el color (decisión del 21 nov: antes .32) */
+  --atenuado: .6;
+
+  /* fuentes (fuentes.css las trae de motor/fuentes/) */
+  --serif: "Source Serif 4", Georgia, serif;
+  --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Menlo, monospace;
+}
