@@ -17,9 +17,10 @@ if (!M || !M.anim || !DAT) return;
 const A = M.anim, S = M.svg, MOV = M.mov, fmt = M.fmt;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+/* todo rótulo de las figuras pasa por M.t: en inglés sale traducido (i18n/en.js) y los números con punto decimal */
 const texto = (padre, x, y, t, clase = '', attrs = {}) => {
   const e = S('text', Object.assign({ x, y, class: clase }, attrs), padre);
-  e.textContent = t;
+  e.textContent = M.t(String(t));
   return e;
 };
 
@@ -144,7 +145,7 @@ function maquina(id, { semilla, si, no, rotulo, unidad, curva = 'normal', PMAX =
 maquina('galton', { semilla: 2026, si: 'C', no: 'S', rotulo: 'Número de caras', unidad: ['cara', 'caras'] });
 maquina('test', { semilla: 2027, si: '+1', no: '0', rotulo: 'Puntaje (número de aciertos)', unidad: ['punto', 'puntos'],
                   curva: 'binomial', PMAX: 0.40, ALTO: 236, control: true });
-const resultado = (G, k) => `${k} ${k === 1 ? G.unidad[0] : G.unidad[1]}`;
+const resultado = (G, k) => M.t(`${k} ${k === 1 ? G.unidad[0] : G.unidad[1]}`);
 /* una persona: los anteriores se atenúan, la bola baja despacio con su marca en cada clavo y al llegar dice su resultado */
 function persona(G, tl, n, seg) {
   if (n > 0) {
@@ -252,6 +253,7 @@ M.diapositiva('normal', {
     NOR.eje = S('path', { d: `M${X0} ${BASE + 6} H${X0 + ANCHO}`, class: 'eje' }, svg);
     NOR.ticks = [-3, -2, -1, 0, 1, 2, 3].map(z => texto(svg, xz(z), BASE + 34, ''));
     NOR.titulo = texto(svg, X0 + ANCHO, 18, '', 'titulo-ej fin');
+    DAT.normales.forEach(e => M.t(e.nombre));
     texto(svg, 0, 18, 'Datos simulados, con fines ilustrativos', 'nota-fig inicio');
     const capa = S('g', {}, svg);
     /* una muestra de 300 por ejemplo, con semilla fija; cada punto se apila en su barra del histograma */
@@ -312,7 +314,7 @@ M.diapositiva('normal', {
 });
 function rotular(e) {
   const ej = DAT.normales[e];
-  NOR.titulo.textContent = ej.nombre + (ej.unidad ? ` (${ej.unidad})` : '');
+  NOR.titulo.textContent = M.t(ej.nombre) + (ej.unidad ? ` (${ej.unidad})` : '');
   NOR.ticks.forEach((t, k) => { t.textContent = fmt(ej.M + (k - 3) * ej.DE, ej.decimales); });
 }
 function rotar() {
@@ -364,8 +366,8 @@ function curvasGrupos(svg, { izq = 60, der = 1060, base = 400, alto = 300, titul
     d: J.M - Y.M, capa, eje, ticks, base, alAjustar: null,
     set(d) {
       c.d = d;
-      pinta(gj, medio + d / 2, J.DE, 'Jóvenes', 1);
-      pinta(gy, medio - d / 2, Y.DE, 'Mayores', -1);
+      pinta(gj, medio + d / 2, J.DE, M.t('Jóvenes'), 1);
+      pinta(gy, medio - d / 2, Y.DE, M.t('Mayores'), -1);
       c.alAjustar?.(d);
     },
     hacia(tl, at, d, dur = 1.2) {
@@ -437,7 +439,7 @@ M.diapositiva('binomial', {
 });
 function marcar(tl, k, colas) {
   const cima = BIN.BASE - binom(10, k) * BIN.esc;
-  tl.call(() => { BIN.marcaTexto.textContent = `${k} ${k === 1 ? 'sello' : 'sellos'}`; }, null, 0);
+  tl.call(() => { BIN.marcaTexto.textContent = M.t(`${k} ${k === 1 ? 'sello' : 'sellos'}`); }, null, 0);
   if (+gsap.getProperty(BIN.marca, 'opacity') === 0) {
     tl.fromTo(BIN.marca, { x: BIN.xk(k), y: cima, opacity: 0 }, { opacity: 1, duration: .4 }, 0);
   } else {
@@ -511,6 +513,6 @@ function ubicar(d) {
   AZ.valor.setAttribute('x', px(dd)); AZ.valor.setAttribute('y', tope - 18);
   AZ.valor.textContent = fmt(dd, 1);
   const p = 2 * (1 - pnorm(dd / SE));
-  if (AZ.areaTexto) AZ.areaTexto.textContent = p < .001 ? '< 0,001' : fmt(p, 3);
+  if (AZ.areaTexto) AZ.areaTexto.textContent = p < .001 ? '< ' + fmt(.001, 3) : fmt(p, 3);
 }
 })();

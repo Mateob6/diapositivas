@@ -98,7 +98,7 @@ El `index.html` de una clase enlaza, en este orden:
 ```
 
 - **El contenido se centra** en el espacio que queda bajo el título, un poco por encima del centro. Con `class="diapositiva arriba"` queda pegado al título.
-- **Portada.** `<section class="diapositiva portada">` con `p.antetitulo`, `h1`, `hr.regla`, `p.sub` y `p.pie`; `h1.largo` para títulos largos y `.motivo` para una figura a la derecha.
+- **Portada.** `<section class="diapositiva portada">` con `p.antetitulo` (**el curso**, obligatorio), `h1`, `hr.regla`, `p.sub`, `p.pie` (el nombre) y `p.titulos` (**los títulos abreviados**, obligatorio); `h1.largo` para títulos largos y `.motivo` para una figura a la derecha. El curso y los títulos los pone `clase.py portada` desde `publicacion.json`, `cursos.json` y `herramientas/autor.json`; `revisar` avisa si faltan o no coinciden.
 - **Pregunta grande.** `<p class="pregunta">`, que entra palabra por palabra. Las variables van en `<span class="subraya x">` o `y`, y el subrayado se dibuja.
 - **Composición.** `.columnas` reparte en columnas iguales (`style="--n:3"`) o con medidas propias (`style="--plantilla: 620px 1fr"`). `.pila` apila con separación y `.abajo` empuja un elemento al fondo.
 

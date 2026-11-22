@@ -25,7 +25,7 @@ const envolver = li => {
   return c;
 };
 const lista = s => (s || '').trim().split(/[\s]+/).filter(Boolean).map(M.numero);
-const corto = v => (v < 0 ? '−' : '') + String(Math.abs(v)).replace('.', ',');
+const corto = v => (v < 0 ? '−' : '') + (M.idioma === 'en' ? String(Math.abs(v)) : String(Math.abs(v)).replace('.', ','));
 /* cifra con su unidad más pequeña: 68 %, 99,7 % */
 const valorEl = (cls, v, dec, unidad) => {
   const e = nuevo('span', cls);

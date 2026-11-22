@@ -5,6 +5,7 @@
   "clase": "probabilidad-inferencia-y-prueba-de-hipotesis",
   "ruta": "estadistica/u3-analisis-inferencial/probabilidad-inferencia-y-prueba-de-hipotesis",
   "titulo": "Probabilidad, inferencia y prueba de hipótesis",
+  "titulo_en": "Probability, inference, and hypothesis testing",
   "resumen": "Probabilidad, distribución normal, de la muestra a la población, hipótesis estadísticas y una primera intuición del valor p.",
   "resumen_en": "Probability, the normal distribution, from sample to population, statistical hypotheses, and a first intuition of the p-value.",
   "orden": 1,
@@ -12,6 +13,9 @@
   "diapositivas": 27,
   "miniatura": "estadistica/u3-analisis-inferencial/probabilidad-inferencia-y-prueba-de-hipotesis/miniatura.webp",
   "miniatura_oscura": "estadistica/u3-analisis-inferencial/probabilidad-inferencia-y-prueba-de-hipotesis/miniatura-oscura.webp",
+  "miniatura_en": "estadistica/u3-analisis-inferencial/probabilidad-inferencia-y-prueba-de-hipotesis/miniatura-en.webp",
+  "miniatura_en_oscura": "estadistica/u3-analisis-inferencial/probabilidad-inferencia-y-prueba-de-hipotesis/miniatura-en-oscura.webp",
+  "pdf_en": "estadistica/u3-analisis-inferencial/probabilidad-inferencia-y-prueba-de-hipotesis/probabilidad-inferencia-y-prueba-de-hipotesis-en.pdf",
   "actualizada": "2026-11-22"
  }
 ]

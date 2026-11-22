@@ -64,13 +64,15 @@ sub { font-size: .62em; line-height: 0; position: relative; vertical-align: base
 
 /* ---------- portada ---------- */
 /* botón de modo claro u oscuro: lo pone el motor arriba a la derecha de la portada */
-.boton-tema { position: absolute; top: 64px; right: 140px; display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px;
+.botones-portada { position: absolute; top: 64px; right: 140px; display: flex; gap: 14px; }
+.boton-portada { display: inline-flex; align-items: center; gap: 12px; padding: 12px 22px;
   border: 2px solid var(--linea); border-radius: 999px; background: transparent; color: var(--tinta-2);
   font: 500 24px/1 var(--sans); cursor: pointer; transition: color .2s, border-color .2s; }
-.boton-tema:hover, .boton-tema:focus-visible { color: var(--tinta); border-color: var(--tinta-2); outline: none; }
+.boton-portada:hover, .boton-portada:focus-visible { color: var(--tinta); border-color: var(--tinta-2); outline: none; }
 .boton-tema > .icono-tema { width: 22px; height: 22px; border-radius: 50%; border: 2px solid currentColor;
   background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
-body.desplazar .boton-tema { top: 24px; right: 24px; }
+.boton-idioma > .icono-idioma { font: 600 16px/1 var(--mono); letter-spacing: .04em; border: 2px solid currentColor; border-radius: 6px; padding: 3px 5px; }
+body.desplazar .botones-portada { top: 24px; right: 24px; }
 .diapositiva.portada { justify-content: center; padding-top: 40px; }
 .portada > .antetitulo { font: 500 28px/1 var(--mono); color: var(--principal); letter-spacing: .01em; }
 .portada > h1 { font: 600 196px/1 var(--serif); letter-spacing: -.035em; margin-left: -8px; max-width: 1150px; }
@@ -204,7 +206,7 @@ html.imprimir, body.imprimir { overflow: visible; height: auto; width: 1920px; b
 body.imprimir #lienzo { position: static; transform: none !important; width: 1920px; height: auto; overflow: visible; }
 body.imprimir .diapositiva { position: relative; visibility: visible; transform: none !important; break-after: page; page-break-after: always; overflow: hidden; }
 body.imprimir .diapositiva:last-child { break-after: auto; page-break-after: auto; }
-body.imprimir #pie-izq, body.imprimir #pie-der, body.imprimir #progreso, body.imprimir .boton-tema { display: none; }
+body.imprimir #pie-izq, body.imprimir #pie-der, body.imprimir #progreso, body.imprimir .botones-portada { display: none; }
 
 html.desplazar, body.desplazar { overflow: auto; height: auto; }
 body.desplazar { overflow-x: hidden; }

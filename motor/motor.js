@@ -29,6 +29,60 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 M.$ = $; M.$$ = $$;
 
+/* ---------- idioma (regla del 22 nov): las clases se escriben en español. Con el botón de la portada (o ?en)
+   se ven en inglés, con la traducción guardada en i18n/en.js (window.TRADUCCION_EN: texto en español → inglés).
+   M.t(texto) traduce lo que escribe el JavaScript (figuras de clase.js); traducirDOM() traduce el HTML antes de armar
+   las diapositivas. En ?prueba se recogen todos los textos (clase.py traducir los guarda en i18n/en.js). ---------- */
+const EN = params.has('en');
+M.idioma = EN ? 'en' : 'es';
+const norm = s => String(s).replace(/\s+/g, ' ').trim();
+const conLetras = k => /\p{L}/u.test(k.replace(/<[^>]*>/g, '').replace(/&[a-z]+;/g, ''));
+/* en inglés, los números van con punto decimal y coma de miles */
+const numerosEn = s => String(s).replace(/(\d),(\d)/g, '$1§$2').replace(/(\d)\.(\d{3})(?!\d)/g, '$1,$2').replace(/§/g, '.');
+const MOTOR_EN = {
+  'Modo oscuro': 'Dark mode', 'Modo claro': 'Light mode',
+  'Flechas, espacio o clic para avanzar · F pantalla completa': 'Arrows, space or click to advance · F full screen'
+};
+const pedidos = new Set();
+M.t = s => {
+  const k = norm(s);
+  if (!k) return s;
+  if (conLetras(k)) pedidos.add(k);
+  if (!EN) return s;
+  const d = window.TRADUCCION_EN || {};
+  return d[k] || MOTOR_EN[k] || (conLetras(k) ? s : numerosEn(s));
+};
+const BLOQUES = 'h1,h2,h3,h4,h5,h6,p,li,td,th,figcaption,caption,dt,dd,.cifra,.rotulo-control,text';
+const ATRIBUTOS = ['data-explica', 'aria-label', 'alt', 'title', 'data-rotulos', 'data-rotulo', 'data-centro', 'data-titulo', 'placeholder'];
+function traducirDOM() {
+  const d = window.TRADUCCION_EN || {};
+  const hojas = new Set([...lienzo.querySelectorAll(BLOQUES)].filter(e => !e.querySelector(BLOQUES)));
+  /* el texto que no está dentro de un bloque (por ejemplo, un span suelto en un control) se traduce aparte */
+  const sueltos = [];
+  const w = document.createTreeWalker(lienzo, NodeFilter.SHOW_TEXT);
+  while (w.nextNode()) {
+    const n = w.currentNode;
+    if (!norm(n.textContent) || n.parentElement.closest('script,style')) continue;
+    if (!hojas.has(n.parentElement.closest(BLOQUES))) sueltos.push(n);
+  }
+  hojas.forEach(e => {
+    const k = norm(e.innerHTML);
+    if (!k) return;
+    if (conLetras(k)) pedidos.add(k);
+    if (!EN) return;
+    if (d[k]) e.innerHTML = d[k];
+    else if (!conLetras(k)) e.innerHTML = numerosEn(e.innerHTML);
+  });
+  sueltos.forEach(n => { const t = M.t(n.textContent); if (EN) n.textContent = t; });
+  ATRIBUTOS.forEach(a => [lienzo, ...lienzo.querySelectorAll(`[${a}]`)].forEach(e => {
+    if (!e.hasAttribute(a)) return;
+    const t = M.t(e.getAttribute(a));
+    if (EN) e.setAttribute(a, t);
+  }));
+  const t = M.t(document.title);
+  if (EN) { document.title = t; document.documentElement.lang = 'en'; }
+}
+
 /* ---------- modo claro u oscuro: el botón de la portada lo cambia y el navegador lo recuerda ---------- */
 const CLAVE_TEMA = 'motor-tema';
 const temaGuardado = (() => { try { return localStorage.getItem(CLAVE_TEMA); } catch (e) { return null; } })();
@@ -40,15 +94,27 @@ M.tema = t => {
 };
 function rotularTema() {
   const oscuro = document.documentElement.dataset.tema === 'oscuro';
-  $$('.boton-tema').forEach(b => { b.setAttribute('aria-pressed', oscuro); b.lastChild.textContent = oscuro ? 'Modo claro' : 'Modo oscuro'; });
+  $$('.boton-tema').forEach(b => { b.setAttribute('aria-pressed', oscuro); b.lastChild.textContent = M.t(oscuro ? 'Modo claro' : 'Modo oscuro'); });
 }
 function botonTema() {
   const portada = $('.diapositiva.portada', lienzo);
-  if (!portada || $('.boton-tema', portada)) return;
-  const b = Object.assign(document.createElement('button'), { type: 'button', className: 'boton-tema' });
+  if (!portada || $('.botones-portada', portada)) return;
+  const caja = Object.assign(document.createElement('div'), { className: 'botones-portada' });
+  /* idioma: recarga la clase en el otro idioma, en la misma diapositiva y paso */
+  const i = Object.assign(document.createElement('button'), { type: 'button', className: 'boton-portada boton-idioma', lang: EN ? 'es' : 'en' });
+  i.innerHTML = `<span class="icono-idioma" aria-hidden="true">${EN ? 'ES' : 'EN'}</span><span>${EN ? 'Español' : 'English'}</span>`;
+  i.addEventListener('click', e => {
+    e.stopPropagation();
+    const q = new URLSearchParams(location.search);
+    if (EN) q.delete('en'); else q.set('en', '');
+    const busca = q.toString().replace(/=(&|$)/g, '$1');
+    location.replace(location.pathname + (busca ? '?' + busca : '') + location.hash);
+  });
+  const b = Object.assign(document.createElement('button'), { type: 'button', className: 'boton-portada boton-tema' });
   b.innerHTML = '<span class="icono-tema" aria-hidden="true"></span><span></span>';
   b.addEventListener('click', e => { e.stopPropagation(); M.tema(document.documentElement.dataset.tema === 'oscuro' ? 'claro' : 'oscuro'); b.blur(); });
-  portada.append(b);
+  caja.append(i, b);
+  portada.append(caja);
   rotularTema();
 }
 
@@ -60,10 +126,10 @@ const atenuado = () => parseFloat(M.color('atenuado')) || .6;
 const MOV = M.mov = { entrada: 'power4.out', cambio: 'power2.inOut', duracion: .7, cascada: .12, fundido: .3 };
 
 /* ---------- números en español: coma decimal y signo menos tipográfico ---------- */
-const NUM = /[−-]?\d+(?:,\d+)?/;
+const NUM = EN ? /[−-]?\d+(?:\.\d+)?/ : /[−-]?\d+(?:,\d+)?/;
 M.numero = s => parseFloat(String(s).replace('−', '-').replace(',', '.'));
 M.fmt = (v, dec = 2) => {
-  const t = Math.abs(v).toFixed(dec).replace('.', ',');
+  const t = EN ? Math.abs(v).toFixed(dec) : Math.abs(v).toFixed(dec).replace('.', ',');
   return (v < 0 && /[1-9]/.test(t) ? '−' : '') + t;
 };
 M.decimales = s => ((String(s).split(/[.,]/)[1]) || '').length;
@@ -172,7 +238,7 @@ const A = M.anim = {
     const orig = nodo._orig ??= nodo.textContent;
     /* el último número del texto: en «P(cara) = 1/2 = 0,50» cuenta el 0,50 */
     const m = [...orig.matchAll(new RegExp(NUM.source, 'g'))].pop();
-    const fin = M.numero(m[0]), dec = (m[0].split(',')[1] || '').length;
+    const fin = M.numero(m[0]), dec = (m[0].split(/[.,]/)[1] || '').length;
     const antes = orig.slice(0, m.index), despues = orig.slice(m.index + m[0].length);
     const pinta = v => { nodo.textContent = antes + M.fmt(v, dec) + despues; };
     const o = { v: desde };
@@ -393,7 +459,7 @@ M.estado = () => ({ diapositiva: cur + 1, paso: step, pasos: planes.get(slides[c
 function marco() {
   const total = planes.get(slides[cur]).total;
   pieDer.textContent = `${cur + 1} / ${slides.length}`;
-  pieIzq.textContent = cur === 0 ? 'Flechas, espacio o clic para avanzar · F pantalla completa' : titulo;
+  pieIzq.textContent = cur === 0 ? M.t('Flechas, espacio o clic para avanzar · F pantalla completa') : titulo;
   gsap.to(progreso, { width: (cur + (total ? step / total : 1)) / slides.length * 1920, duration: estatico ? 0 : .4, ease: 'power2.out' });
   history.replaceState(null, '', location.pathname + location.search + '#' + (cur + 1) + (step ? '.' + step : ''));
 }
@@ -473,6 +539,7 @@ function escuchar() {
 
 /* ---------- arranque: cuando las fuentes estén (las medidas dependen de ellas) ---------- */
 function arrancar() {
+  traducirDOM();
   preparar();
   botonTema();
   crearMarco();
@@ -523,6 +590,8 @@ function prueba() {
     while (!(cur === 0 && step === 0) && n < 5000) { anterior(); n++; }
     res.vuelta = n + 1;
   } catch (err) { errores.push('prueba: ' + (err && err.stack || err)); }
+  res.textos = [...pedidos];
+  res.idioma = M.idioma;
   const pre = document.createElement('pre');
   pre.id = 'motor-prueba'; pre.hidden = true; pre.textContent = JSON.stringify(res);
   document.body.append(pre);
