@@ -113,6 +113,7 @@ svg.normal { width: 1440px; margin-inline: auto; }
 /* ── D21 · resultado descriptivo y resultado inferencial ── */
 #resultados .tabla { font-size: 32px; margin: 6px 0 24px; }
 #resultados .tabla th, #resultados .tabla td { padding: 12px 18px; }
+#resultados .significativa { color: var(--principal); }
 
 /* ── D25 · reporte 3 ── */
 #reporte .tabla { font-size: 30px; }
