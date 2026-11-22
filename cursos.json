@@ -1,0 +1,16 @@
+{
+ "estadistica": {
+  "nombre": "Estadística",
+  "perfil": "Estadística",
+  "dominio": 0,
+  "descripcion": {
+   "es": "Estadística descriptiva e inferencial aplicada a la investigación en psicología.",
+   "en": "Descriptive and inferential statistics applied to psychological research."
+  },
+  "unidades": [
+   {"numero": 1, "slug": "u1-medicion", "es": "El problema de la medición en psicología", "en": "The measurement problem in psychology"},
+   {"numero": 2, "slug": "u2-analisis-descriptivo", "es": "El análisis descriptivo de datos", "en": "Descriptive data analysis"},
+   {"numero": 3, "slug": "u3-analisis-inferencial", "es": "El análisis inferencial", "en": "Inferential analysis"}
+  ]
+ }
+}

@@ -128,6 +128,7 @@ La marca de cada diapositiva del Word base (skill `contenido-clase`) dice qué e
 | dos columnas | `<div class="columnas">` |
 | cita de autor | `<blockquote class="cita"><p>…</p><cite>Autor (año, p. N)</cite></blockquote>` |
 | burbujas de diálogo | `<ol class="bloque burbujas">` con `data-quien` en cada `li` |
+| botón de modo oscuro | no se escribe: el motor lo pone en la `section.portada`. Cambia `data-tema` en `<html>` y lo guarda en el navegador; `?oscuro` o `?claro` en la dirección lo fuerzan. En `paleta.css` está la paleta oscura; si una figura propia mezcla áreas, usa `mix-blend-mode: var(--mezcla)`, y el texto sobre el color principal, `var(--sobre-principal)` |
 | recuadro | `<p class="recuadro">` (`secundario` para el otro tono). Debajo de una fila de cajas, flechas, etapas, anillos o línea de tiempo horizontal **va centrado solo** (regla del 22 nov); en cualquier otro lugar queda alineado a la izquierda |
 | subíndices | `H<sub>0</sub>`, `μ<sub>1</sub>`. **Nunca los subíndices Unicode** (₀, ₁): las fuentes no los traen y en los títulos con serif «H₀» sale como «Ho» |
 | diagrama geométrico | `<svg class="diagrama" viewBox="0 0 1640 H">` escrito a mano (ver abajo) |

@@ -1,8 +1,15 @@
 [
  {
-  "ruta": "estadistica/2026-2/probabilidad-inferencia-y-prueba-de-hipotesis",
+  "curso": "estadistica",
+  "unidad": "u3-analisis-inferencial",
+  "clase": "probabilidad-inferencia-y-prueba-de-hipotesis",
+  "ruta": "estadistica/u3-analisis-inferencial/probabilidad-inferencia-y-prueba-de-hipotesis",
   "titulo": "Probabilidad, inferencia y prueba de hipótesis",
-  "curso": "Estadística · 2026-2",
-  "publicada": "2026-11-22"
+  "resumen": "Probabilidad, distribución normal, de la muestra a la población, hipótesis estadísticas y una primera intuición del valor p.",
+  "resumen_en": "Probability, the normal distribution, from sample to population, statistical hypotheses, and a first intuition of the p-value.",
+  "orden": 1,
+  "pdf": "estadistica/u3-analisis-inferencial/probabilidad-inferencia-y-prueba-de-hipotesis/probabilidad-inferencia-y-prueba-de-hipotesis.pdf",
+  "diapositivas": 27,
+  "actualizada": "2026-11-22"
  }
 ]

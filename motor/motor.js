@@ -413,6 +413,19 @@ function ajustar() {
 }
 
 /* celular en vertical: todas las diapositivas completas, una debajo de otra */
+/* ?imprimir: todas las diapositivas en su estado final, a tamaño real, una por página (clase.py pdf las imprime con Chrome) */
+const imprimir = params.has('imprimir');
+function modoImprimir() {
+  document.documentElement.classList.add('imprimir'); document.body.classList.add('imprimir');
+  document.documentElement.dataset.tema = 'claro';
+  M.instantaneo = true; M.lectura = true;
+  slides.forEach(el => {
+    entrada(el).progress(1);
+    for (let k = 1; k <= planes.get(el).total; k++) paso(el, k).progress(1);
+  });
+  M.instantaneo = false;
+}
+
 function modoDesplazar() {
   document.documentElement.classList.add('desplazar'); document.body.classList.add('desplazar');
   const s = innerWidth / 1920;
@@ -463,6 +476,7 @@ function arrancar() {
   preparar();
   botonTema();
   crearMarco();
+  if (imprimir) { modoImprimir(); M.listo = true; document.dispatchEvent(new Event('motor:listo')); return; }
   if (esMovil()) { modoDesplazar(); M.listo = true; return; }
   ajustar();
   escuchar();

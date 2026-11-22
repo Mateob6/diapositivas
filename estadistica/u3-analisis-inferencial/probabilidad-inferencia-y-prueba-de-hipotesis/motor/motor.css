@@ -195,6 +195,14 @@ input.deslizador::-moz-range-thumb { width: 30px; height: 30px; border: 0; borde
 #progreso { position: absolute; left: 0; bottom: 0; height: 5px; width: 0; background: var(--principal); pointer-events: none; }
 
 /* ---------- celular en vertical (o ?movil): todas las diapositivas, una debajo de otra ---------- */
+/* ---------- ?imprimir: una diapositiva por página de 1920 × 1080 (clase.py pdf) ---------- */
+@page { size: 1920px 1080px; margin: 0; }
+html.imprimir, body.imprimir { overflow: visible; height: auto; width: 1920px; background: var(--fondo); print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+body.imprimir #lienzo { position: static; transform: none !important; width: 1920px; height: auto; overflow: visible; }
+body.imprimir .diapositiva { position: relative; visibility: visible; transform: none !important; break-after: page; page-break-after: always; overflow: hidden; }
+body.imprimir .diapositiva:last-child { break-after: auto; page-break-after: auto; }
+body.imprimir #pie-izq, body.imprimir #pie-der, body.imprimir #progreso, body.imprimir .boton-tema { display: none; }
+
 html.desplazar, body.desplazar { overflow: auto; height: auto; }
 body.desplazar { overflow-x: hidden; }
 body.desplazar #lienzo { position: static; transform: none !important; width: auto; height: auto; overflow: visible; }
