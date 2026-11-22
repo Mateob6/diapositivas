@@ -118,3 +118,9 @@ svg.normal { width: 1440px; margin-inline: auto; }
 /* ── D25 · reporte 3 ── */
 #reporte .tabla { font-size: 30px; }
 #reporte .tabla th, #reporte .tabla td { padding: 16px 18px; }
+
+/* ── D17 · la hoja del ejercicio: QR y enlace. El QR va oscuro sobre blanco también en modo oscuro ── */
+.hoja-ejercicio { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.hoja-ejercicio .qr { width: 340px; height: 340px; background: #FFFFFF; padding: 14px; border-radius: 12px; border: 2px solid var(--linea); }
+.hoja-ejercicio .rotulo-hoja { font: 600 26px/1.3 var(--sans); color: var(--tinta); text-align: center; }
+.hoja-ejercicio .enlace-hoja { font: 400 22px/1.35 var(--mono); color: var(--principal); text-align: center; word-break: break-all; }
