@@ -29,6 +29,29 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 M.$ = $; M.$$ = $$;
 
+/* ---------- modo claro u oscuro: el botón de la portada lo cambia y el navegador lo recuerda ---------- */
+const CLAVE_TEMA = 'motor-tema';
+const temaGuardado = (() => { try { return localStorage.getItem(CLAVE_TEMA); } catch (e) { return null; } })();
+document.documentElement.dataset.tema = params.has('oscuro') ? 'oscuro' : params.has('claro') ? 'claro' : (temaGuardado || 'claro');
+M.tema = t => {
+  document.documentElement.dataset.tema = t;
+  try { localStorage.setItem(CLAVE_TEMA, t); } catch (e) { /* sin almacenamiento: vale solo para esta vez */ }
+  rotularTema();
+};
+function rotularTema() {
+  const oscuro = document.documentElement.dataset.tema === 'oscuro';
+  $$('.boton-tema').forEach(b => { b.setAttribute('aria-pressed', oscuro); b.lastChild.textContent = oscuro ? 'Modo claro' : 'Modo oscuro'; });
+}
+function botonTema() {
+  const portada = $('.diapositiva.portada', lienzo);
+  if (!portada || $('.boton-tema', portada)) return;
+  const b = Object.assign(document.createElement('button'), { type: 'button', className: 'boton-tema' });
+  b.innerHTML = '<span class="icono-tema" aria-hidden="true"></span><span></span>';
+  b.addEventListener('click', e => { e.stopPropagation(); M.tema(document.documentElement.dataset.tema === 'oscuro' ? 'claro' : 'oscuro'); b.blur(); });
+  portada.append(b);
+  rotularTema();
+}
+
 /* ---------- paleta: se lee de paleta.css; aquí no se escribe ningún color ---------- */
 M.color = nombre => getComputedStyle(document.documentElement).getPropertyValue('--' + nombre).trim();
 const atenuado = () => parseFloat(M.color('atenuado')) || .6;
@@ -438,6 +461,7 @@ function escuchar() {
 /* ---------- arranque: cuando las fuentes estén (las medidas dependen de ellas) ---------- */
 function arrancar() {
   preparar();
+  botonTema();
   crearMarco();
   if (esMovil()) { modoDesplazar(); M.listo = true; return; }
   ajustar();

@@ -7,7 +7,13 @@
      tinta / fondo 13,9 · tinta-2 / fondo 6,5 · principal / fondo 5,7 · secundario / fondo 6,4
      tinta / principal-tinte 12,0 · tinta-2 / principal-tinte 5,6 · principal / principal-tinte 4,9
      tinta / principal-relleno 8,2 · tinta / secundario-relleno 8,4 · blanco / principal 6,0
-   Sobre los rellenos solo va tinta (tinta-2 da 3,8). */
+   Sobre los rellenos solo va tinta (tinta-2 da 3,8).
+
+   Modo oscuro (botón de la portada; decisión del 22 nov): los mismos nombres con otros valores, en
+   :root[data-tema="oscuro"]. Contraste verificado:
+     tinta / fondo 14,3 · tinta-2 / fondo 7,8 · principal / fondo 6,9 · secundario / fondo 7,7
+     tinta / principal-tinte 11,8 · principal / principal-tinte 5,7 · tinta / principal-relleno 6,3
+     tinta / secundario-relleno 6,2 · sobre-principal / principal 6,9 */
 
 :root {
   /* neutros */
@@ -28,6 +34,11 @@
   --secundario-medio: #A9C3CF;
   --secundario-tinte: #DDEAF0;
 
+  /* el texto que va encima de un círculo o sello del color principal (números de cajas, etiquetas) */
+  --sobre-principal: #FFFFFF;
+  /* cómo se mezclan dos áreas que se cruzan (curvas superpuestas): multiplicar en claro, aclarar en oscuro */
+  --mezcla: multiply;
+
   /* lo que ya no es foco baja a esta opacidad (foco por pasos). Se sigue leyendo; el foco se nota por el color (decisión del 21 nov: antes .32) */
   --atenuado: .6;
 
@@ -35,4 +46,26 @@
   --serif: "Source Serif 4", Georgia, serif;
   --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
   --mono: "IBM Plex Mono", Menlo, monospace;
+}
+
+/* Modo oscuro: lo activa el botón de la portada (o ?oscuro en la dirección) */
+:root[data-tema="oscuro"] {
+  color-scheme: dark;
+  --fondo: #1D1B22;
+  --tinta: #EFEAE4;
+  --tinta-2: #B4ADBA;
+  --linea: #3A3541;
+
+  --principal: #EE8A63;
+  --principal-relleno: #8A3E22;
+  --principal-medio: #8C4A31;
+  --principal-tinte: #3A2721;
+
+  --secundario: #7DB6D0;
+  --secundario-relleno: #2B5B71;
+  --secundario-medio: #3E6678;
+  --secundario-tinte: #1F2F37;
+
+  --sobre-principal: #1D1B22;
+  --mezcla: screen;
 }

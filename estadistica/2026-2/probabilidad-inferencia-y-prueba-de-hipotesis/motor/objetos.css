@@ -33,7 +33,7 @@
 .cajas.con-linea > li { background: transparent; border: 2px solid var(--c-medio); border-left: 0; border-radius: 0 8px 8px 0; padding-left: 46px; }
 .cajas.con-linea > li.es-foco { background: var(--c-tinte); }
 .cajas.con-linea > li > .barra { position: absolute; left: 0; top: -2px; bottom: -2px; width: 8px; background: var(--c); transform-origin: top; }
-.cajas .marca { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--c); color: #fff; font: 500 28px/1 var(--mono); margin-bottom: 22px; }
+.cajas .marca { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--c); color: var(--sobre-principal); font: 500 28px/1 var(--mono); margin-bottom: 22px; }
 
 /* ===================== texto con línea lateral (lista sobria con foco) ===================== */
 .bloque.linea-lateral { font-size: 36px; max-width: 1400px; }
@@ -77,7 +77,7 @@
 .ciclo > svg { grid-column: 1; grid-row: 1 / span var(--filas); width: 600px; height: 600px; overflow: visible; }
 .ciclo > li { grid-column: 2; display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 28px; align-items: start; }
 .ciclo > li > .marca { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--c-tinte); color: var(--c); font: 500 28px/1 var(--mono); transition: background-color .35s, color .35s; }
-.ciclo > li.es-foco > .marca { background: var(--c); color: #fff; }
+.ciclo > li.es-foco > .marca { background: var(--c); color: var(--sobre-principal); }
 .ciclo .forma-sector { fill: var(--c-tinte); transition: fill .35s; }
 .ciclo .es-foco > .forma-sector { fill: var(--c-relleno); }
 .ciclo .sector-num { fill: var(--c); font: 500 34px var(--mono); text-anchor: middle; dominant-baseline: central; transition: fill .35s; }
