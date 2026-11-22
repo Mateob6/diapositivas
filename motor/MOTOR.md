@@ -35,6 +35,7 @@ uv run $C revisar "<carpeta>"                # capturas, recorrido de pasos e in
 uv run $C revisar "<carpeta>" --pasos        # además, una captura por cada paso
 uv run $C empaquetar "<carpeta>"             # el .html único, con fuentes y GSAP adentro
 uv run $C motor "<carpeta>"                  # copia el motor central actual y vuelve a revisar
+uv run $C publicar "<carpeta>" --ruta curso/semestre/tema --curso "Curso · semestre"   # al sitio público
 uv run $C estado                             # lista las clases y si su motor está al día
 ```
 
@@ -44,6 +45,7 @@ uv run $C estado                             # lista las clases y si su motor es
   - Anota los errores, lo que se sale del área útil (140 px a los lados y nada por debajo de 1000 px) y las diapositivas con más de 110 palabras (sin contar el texto de las figuras).
   - Captura cada diapositiva en su último paso y arma hojas de seis.
   - Todo queda en `revision/informe.md`, `revision/hoja-NN.png` y `revision/capturas/`. Tarda unos 10 segundos con 26 diapositivas.
+- **`publicar`** copia solo `diapositivas/` al repositorio público [Mateob6/diapositivas](https://github.com/Mateob6/diapositivas), cuya copia local está en `diapositivas-web/publicacion/`. Rehace la página de entrada y sube los cambios. El sitio es https://mateob6.github.io/diapositivas/. La dirección no lleva la universidad, y antes de publicar se revisa que no haya datos de estudiantes ni rutas del disco.
 - **El Word no se pierde al regenerarlo.** Si ya existe, el generador lo copia antes a `fuente/respaldos/` con la fecha, por si tenía notas del docente.
 
 ## Archivos del motor

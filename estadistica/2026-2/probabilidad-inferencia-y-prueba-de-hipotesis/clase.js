@@ -1,11 +1,12 @@
 /* clase.js: las figuras propias de la clase 13 (probabilidad, inferencia y prueba de hipótesis).
    Va después del motor y de datos/clase13.js. Cada figura se registra con Motor.diapositiva por el id de su section:
-     moneda (D3)    diez monedas que caen: 9 caras y 1 sello
-     galton (D7)    máquina de Galton con el histograma de caras debajo
-     normal (D8)    ejemplos de la curva normal que rotan solos
-     memoria (D10)  curvas de memoria de jóvenes y mayores, con la diferencia movible
-     binomial (D17) barras de 0 a 10 caras con las colas sombreadas
-     azar (D18)     curvas de los grupos arriba y curva del azar con el área abajo
+     moneda (D4)    diez monedas que caen: 9 caras y 1 sello
+     galton (D8)    máquina de Galton con el histograma de caras debajo
+     test (D9)      la misma máquina: un test de 10 preguntas respondido al azar (+1 si acierta, 0 si falla)
+     normal (D11)   ejemplos de la curva normal que rotan solos
+     memoria (D13)  curvas de memoria de jóvenes y mayores, con la diferencia movible
+     binomial (D22) barras de 0 a 10 sellos con las colas sombreadas
+     azar (D23)     curvas de los grupos arriba y curva del azar con el área abajo
    Cada paso es una línea de tiempo de GSAP: el modo instantáneo (retroceder, ?estatico, ?prueba) deja el estado final.
    Los colores van por clases de CSS (clase.css), nunca escritos aquí.
    Si algo de aquí sirve para otras clases, se sube al motor central (diapositivas-web/motor/). */
@@ -36,7 +37,7 @@ const comb = (n, k) => { let c = 1; for (let i = 1; i <= k; i++) c = c * (n - k 
 const binom = (n, k) => comb(n, k) / 2 ** n;
 const camino = (pts) => pts.map(([x, y], i) => (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join(' ');
 
-/* ═════════ D3 · monedas ═════════ */
+/* ═════════ D4 · monedas ═════════ */
 const MON = {};
 M.diapositiva('moneda', {
   preparar(el) {
@@ -62,97 +63,101 @@ M.diapositiva('moneda', {
   ]
 });
 
-/* ═════════ D7 · máquina de Galton ═════════ */
-const GAL = {};
-M.diapositiva('galton', {
-  preparar(el) {
-    const svg = $('svg.galton', el);
-    const X0 = 820, DX = 72, Y0 = 40, DY = 30, FILAS = 10, BASE = 600, ALTO = 210, PMAX = 0.27, YB = 352;
-    const xk = k => X0 + (k - 5) * DX;
-    Object.assign(GAL, { X0, DX, Y0, DY, FILAS, BASE, ALTO, PMAX, YB, xk });
-    GAL.clavos = [];
-    for (let r = 0; r < FILAS; r++) for (let j = 0; j <= r; j++)
-      GAL.clavos.push(S('circle', { cx: X0 + (j - r / 2) * DX, cy: Y0 + r * DY, r: 5, class: 'clavo' }, svg));
-    GAL.divisores = Array.from({ length: 12 }, (_, k) => S('path', { d: `M${xk(k) - DX / 2} ${YB - 24} V${YB + 16}`, class: 'divisor' }, svg));
-    GAL.eje = S('path', { d: `M${xk(0) - DX / 2} ${BASE} H${xk(10) + DX / 2}`, class: 'eje' }, svg);
-    GAL.barras = Array.from({ length: 11 }, (_, k) => S('rect', { x: xk(k) - 26, y: BASE, width: 52, height: 0, class: 'barra' }, svg));
-    GAL.nums = Array.from({ length: 11 }, (_, k) => texto(svg, xk(k), BASE + 28, k));
-    GAL.nums.push(texto(svg, X0, BASE + 58, 'Número de caras', 'rot'));
-    const pts = [];
-    for (let x = -0.5; x <= 10.5001; x += .05) pts.push([xk(x), BASE - dnorm(x, 5, Math.sqrt(2.5)) / PMAX * ALTO]);
-    GAL.campana = S('path', { d: camino(pts), class: 'campana' }, svg);
-    GAL.capa = S('g', {}, svg);
-    /* 1.000 bolas con semilla fija: 1 = cara (derecha), 0 = sello (izquierda) */
-    const r = mulberry32(2026);
-    GAL.caminos = Array.from({ length: 1000 }, () => Array.from({ length: FILAS }, () => (r() < .5 ? 1 : 0)));
-    const conteos = (a, b) => { const c = Array(11).fill(0); GAL.caminos.slice(a, b).forEach(cm => c[cm.reduce((s, v) => s + v, 0)]++); return c; };
-    GAL.p100 = conteos(0, 100).map(c => c / 100);
-    GAL.p1000 = conteos(0, 1000).map(c => c / 1000);
-  },
-  entrada(el, tl) {
-    GAL.capa.innerHTML = '';
-    GAL.cont = Array(11).fill(0);
-    alturas(Array(11).fill(0));
-    A.ocultarTrazo(GAL.campana);
-    tl.fromTo(GAL.clavos, { opacity: 0 }, { opacity: 1, duration: .3, stagger: .006 }, .3);
-    tl.fromTo([...GAL.divisores, ...GAL.nums], { opacity: 0 }, { opacity: 1, duration: .4 }, .7);
-    A.dibujar(GAL.eje, tl, .6, .8);
-  },
-  pasos: [
-    /* 1 · una bola lenta, con la moneda de cada clavo */
-    (el, tl) => {
-      const cm = GAL.caminos[0], seg = .36;
-      const { bola, k } = soltar(cm, tl, .2, seg, false);
-      let h = 0;
-      cm.forEach((c, r) => {
-        const x = GAL.X0 + (h - r / 2) * GAL.DX, y = GAL.Y0 + r * GAL.DY;
-        const l = texto(GAL.capa, x + (c ? 28 : -28), y - 6, c ? 'C' : 'S', 'letra-gal ' + (c ? 'l-cara' : 'l-sello'));
-        tl.fromTo(l, { opacity: 0 }, { opacity: 1, duration: .15 }, .2 + (r + 1) * seg - .1);
-        h += c;
-      });
-      GAL.primera = { bola, k };
+/* ═════════ D8 y D9 · máquina de Galton (monedas y test respondido al azar) ═════════ */
+/* La misma máquina sirve para las dos diapositivas: cambian la semilla, las marcas de cada clavo y el rótulo del eje. */
+function maquina(id, { semilla, si, no, rotulo }) {
+  const G = {};
+  M.diapositiva(id, {
+    preparar(el) {
+      const svg = $('svg.galton', el);
+      const X0 = 820, DX = 72, Y0 = 40, DY = 30, FILAS = 10, BASE = 600, ALTO = 210, PMAX = 0.27, YB = 352;
+      const xk = k => X0 + (k - 5) * DX;
+      Object.assign(G, { X0, DX, Y0, DY, FILAS, BASE, ALTO, PMAX, YB, xk });
+      G.clavos = [];
+      for (let r = 0; r < FILAS; r++) for (let j = 0; j <= r; j++)
+        G.clavos.push(S('circle', { cx: X0 + (j - r / 2) * DX, cy: Y0 + r * DY, r: 5, class: 'clavo' }, svg));
+      G.divisores = Array.from({ length: 12 }, (_, k) => S('path', { d: `M${xk(k) - DX / 2} ${YB - 24} V${YB + 16}`, class: 'divisor' }, svg));
+      G.eje = S('path', { d: `M${xk(0) - DX / 2} ${BASE} H${xk(10) + DX / 2}`, class: 'eje' }, svg);
+      G.barras = Array.from({ length: 11 }, (_, k) => S('rect', { x: xk(k) - 26, y: BASE, width: 52, height: 0, class: 'barra' }, svg));
+      G.nums = Array.from({ length: 11 }, (_, k) => texto(svg, xk(k), BASE + 28, k));
+      G.nums.push(texto(svg, X0, BASE + 58, rotulo, 'rot'));
+      const pts = [];
+      for (let x = -0.5; x <= 10.5001; x += .05) pts.push([xk(x), BASE - dnorm(x, 5, Math.sqrt(2.5)) / PMAX * ALTO]);
+      G.campana = S('path', { d: camino(pts), class: 'campana' }, svg);
+      G.capa = S('g', {}, svg);
+      /* 1.000 bolas con semilla fija: 1 = derecha (cara o acierto), 0 = izquierda (sello o error) */
+      const r = mulberry32(semilla);
+      G.caminos = Array.from({ length: 1000 }, () => Array.from({ length: FILAS }, () => (r() < .5 ? 1 : 0)));
+      const conteos = (a, b) => { const c = Array(11).fill(0); G.caminos.slice(a, b).forEach(cm => c[cm.reduce((s, v) => s + v, 0)]++); return c; };
+      G.p100 = conteos(0, 100).map(c => c / 100);
+      G.p1000 = conteos(0, 1000).map(c => c / 1000);
     },
-    /* 2 · caen 100 bolas y el histograma crece con cada una */
-    (el, tl) => {
-      tl.to(GAL.capa.children, { opacity: 0, duration: .3 }, 0);
-      GAL.cont = Array(11).fill(0);
-      for (let i = 0; i < 100; i++) {
-        const t0 = .3 + i * .035, seg = .085;
-        const { k } = soltar(GAL.caminos[i], tl, t0, seg, true);
-        tl.call(() => { GAL.cont[k]++; alturas(GAL.cont.map(c => c / 100)); }, null, t0 + (GAL.FILAS + 1) * seg);
+    entrada(el, tl) {
+      G.capa.innerHTML = '';
+      G.cont = Array(11).fill(0);
+      alturas(G, Array(11).fill(0));
+      A.ocultarTrazo(G.campana);
+      tl.fromTo(G.clavos, { opacity: 0 }, { opacity: 1, duration: .3, stagger: .006 }, .3);
+      tl.fromTo([...G.divisores, ...G.nums], { opacity: 0 }, { opacity: 1, duration: .4 }, .7);
+      A.dibujar(G.eje, tl, .6, .8);
+    },
+    pasos: [
+      /* 1 · una bola lenta, con lo que pasa en cada clavo */
+      (el, tl) => {
+        const cm = G.caminos[0], seg = .36;
+        soltar(G, cm, tl, .2, seg, false);
+        let h = 0;
+        cm.forEach((c, r) => {
+          const x = G.X0 + (h - r / 2) * G.DX, y = G.Y0 + r * G.DY;
+          const l = texto(G.capa, x + (c ? 30 : -30), y - 6, c ? si : no, 'letra-gal ' + (c ? 'l-si' : 'l-no'));
+          tl.fromTo(l, { opacity: 0 }, { opacity: 1, duration: .15 }, .2 + (r + 1) * seg - .1);
+          h += c;
+        });
+      },
+      /* 2 · caen 100 bolas y el histograma crece con cada una */
+      (el, tl) => {
+        tl.to(G.capa.children, { opacity: 0, duration: .3 }, 0);
+        G.cont = Array(11).fill(0);
+        for (let i = 0; i < 100; i++) {
+          const t0 = .3 + i * .035, seg = .085;
+          const { k } = soltar(G, G.caminos[i], tl, t0, seg, true);
+          tl.call(() => { G.cont[k]++; alturas(G, G.cont.map(c => c / 100)); }, null, t0 + (G.FILAS + 1) * seg);
+        }
+      },
+      /* 3 · caen 1.000 (se dibuja una muestra) y aparece la campana */
+      (el, tl) => {
+        for (let i = 0; i < 160; i++) soltar(G, G.caminos[100 + i], tl, i * .016, .07, true);
+        const o = { t: 0 };
+        tl.to(o, { t: 1, duration: 3.2, ease: 'none', onUpdate: () => alturas(G, G.p100.map((p, k) => p + (G.p1000[k] - p) * o.t)) }, 0);
+        A.dibujar(G.campana, tl, 3.3, 1.2);
       }
-    },
-    /* 3 · caen 1.000 (se dibuja una muestra) y aparece la campana */
-    (el, tl) => {
-      for (let i = 0; i < 160; i++) soltar(GAL.caminos[100 + i], tl, i * .016, .07, true);
-      const o = { t: 0 };
-      tl.to(o, { t: 1, duration: 3.2, ease: 'none', onUpdate: () => alturas(GAL.p100.map((p, k) => p + (GAL.p1000[k] - p) * o.t)) }, 0);
-      A.dibujar(GAL.campana, tl, 3.3, 1.2);
-    }
-  ]
-});
-function alturas(props) {
+    ]
+  });
+}
+maquina('galton', { semilla: 2026, si: 'C', no: 'S', rotulo: 'Número de caras' });
+maquina('test', { semilla: 2027, si: '+1', no: '0', rotulo: 'Puntaje (número de aciertos)' });
+function alturas(G, props) {
   props.forEach((p, k) => {
-    const h = p / GAL.PMAX * GAL.ALTO;
-    GAL.barras[k].setAttribute('y', (GAL.BASE - h).toFixed(1));
-    GAL.barras[k].setAttribute('height', h.toFixed(1));
+    const h = p / G.PMAX * G.ALTO;
+    G.barras[k].setAttribute('y', (G.BASE - h).toFixed(1));
+    G.barras[k].setAttribute('height', h.toFixed(1));
   });
 }
 /* deja caer una bola por su camino de clavos; si «fugaz», desaparece al llegar a su cajón */
-function soltar(cm, tl, t0, seg, fugaz) {
-  const { X0, DX, Y0, DY, YB, xk } = GAL;
+function soltar(G, cm, tl, t0, seg, fugaz) {
+  const { X0, DX, Y0, DY, YB, xk } = G;
   const pts = [];
   let h = 0;
   cm.forEach((c, r) => { pts.push([X0 + (h - r / 2) * DX, Y0 + r * DY - 16]); h += c; });
   pts.push([xk(h), YB]);
-  const bola = S('circle', { cx: X0, cy: Y0 - 44, r: 10, class: 'bola' }, GAL.capa);
+  const bola = S('circle', { cx: X0, cy: Y0 - 44, r: 10, class: 'bola' }, G.capa);
   tl.fromTo(bola, { opacity: 0 }, { opacity: 1, duration: .1 }, t0);
   tl.to(bola, { keyframes: pts.map(([x, y]) => ({ attr: { cx: x, cy: y }, duration: seg, ease: 'power1.in' })) }, t0);
   if (fugaz) tl.to(bola, { opacity: 0, duration: .15 }, t0 + pts.length * seg);
   return { bola, k: h };
 }
 
-/* ═════════ D8 · la curva normal, con ejemplos que rotan solos ═════════ */
+/* ═════════ D11 · la curva normal, con ejemplos que rotan solos ═════════ */
 const NOR = {};
 M.diapositiva('normal', {
   preparar(el) {
@@ -226,7 +231,7 @@ function detenerNormal() {
   if (NOR.puntos) gsap.killTweensOf(NOR.puntos);
 }
 
-/* ═════════ curvas de los grupos (D10 y D18): jóvenes y mayores ═════════ */
+/* ═════════ curvas de los grupos (D13 y D23): jóvenes y mayores ═════════ */
 function curvasGrupos(svg, { izq = 60, der = 1060, base = 400, alto = 300, titulo = true }) {
   const { jovenes: J, mayores: Y } = DAT.memoria;
   const lo = 40, hi = 112, px = v => izq + (v - lo) / (hi - lo) * (der - izq);
@@ -283,7 +288,7 @@ function conectar(el, c) {
 }
 const REAL = DAT.memoria.jovenes.M - DAT.memoria.mayores.M;
 
-/* ═════════ D10 · memoria y edad: ¿real o azar? ═════════ */
+/* ═════════ D13 · memoria y edad: ¿real o azar? ═════════ */
 const MEM = {};
 M.diapositiva('memoria', {
   preparar(el) {
@@ -303,7 +308,7 @@ M.diapositiva('memoria', {
   ]
 });
 
-/* ═════════ D17 · barras de 0 a 10 caras ═════════ */
+/* ═════════ D22 · barras de 0 a 10 sellos (la misma moneda del ejemplo 1) ═════════ */
 const BIN = {};
 M.diapositiva('binomial', {
   preparar(el) {
@@ -313,7 +318,7 @@ M.diapositiva('binomial', {
     BIN.eje = S('path', { d: `M30 ${BASE} H1040`, class: 'eje' }, svg);
     BIN.barras = Array.from({ length: 11 }, (_, k) => S('rect', { x: xk(k) - 31, y: BASE, width: 62, height: 0, class: 'barra' }, svg));
     BIN.rotulos = [...Array.from({ length: 11 }, (_, k) => texto(svg, xk(k), BASE + 28, k)),
-                   texto(svg, 535, BASE + 66, 'Caras en 10 lanzamientos', 'rot')];
+                   texto(svg, 535, BASE + 66, 'Sellos en 10 lanzamientos', 'rot')];
     BIN.marca = S('g', { class: 'marcador' }, svg);
     S('path', { d: 'M-14 -26 H14 L0 -6 Z', class: 'flechita' }, BIN.marca);
     BIN.marcaTexto = texto(BIN.marca, 0, -48, '', 'rot-marcador');
@@ -329,13 +334,13 @@ M.diapositiva('binomial', {
         tl.fromTo(b, { attr: { y: BIN.BASE, height: 0 } }, { attr: { y: BIN.BASE - h, height: h }, duration: .7, ease: 'power3.out' }, k * .06);
       });
     },
-    (el, tl) => { marcar(tl, 9, [0, 1, 9, 10]); },
+    (el, tl) => { marcar(tl, 1, [0, 1, 9, 10]); },
     (el, tl) => { marcar(tl, 6, [0, 1, 2, 3, 4, 6, 7, 8, 9, 10]); }
   ]
 });
 function marcar(tl, k, colas) {
   const cima = BIN.BASE - binom(10, k) * BIN.esc;
-  tl.call(() => { BIN.marcaTexto.textContent = `${k} caras`; }, null, 0);
+  tl.call(() => { BIN.marcaTexto.textContent = `${k} ${k === 1 ? 'sello' : 'sellos'}`; }, null, 0);
   if (+gsap.getProperty(BIN.marca, 'opacity') === 0) {
     tl.fromTo(BIN.marca, { x: BIN.xk(k), y: cima, opacity: 0 }, { opacity: 1, duration: .4 }, 0);
   } else {
@@ -344,7 +349,7 @@ function marcar(tl, k, colas) {
   tl.call(() => BIN.barras.forEach((b, i) => b.classList.toggle('marcada', colas.includes(i))), null, .3);
 }
 
-/* ═════════ D18 · ¿dónde cae? curvas de los grupos y curva del azar ═════════ */
+/* ═════════ D23 · ¿dónde cae? curvas de los grupos y curva del azar ═════════ */
 const AZ = {};
 M.diapositiva('azar', {
   preparar(el) {
