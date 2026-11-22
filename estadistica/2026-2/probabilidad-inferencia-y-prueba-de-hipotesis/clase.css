@@ -54,6 +54,9 @@ svg.normal { width: 1440px; margin-inline: auto; }
 .normal .titulo-ej { font: 600 30px var(--sans); fill: var(--tinta); }
 .normal .nota-fig { font: italic 400 24px var(--sans); fill: var(--tinta-2); }
 
+/* ── D11 · origen de la normal: el recuadro en lista ocupa todo el ancho ── */
+#origen .recuadro { max-width: none; }
+
 /* ── D3 · población y muestra ── */
 .diagrama text.it { font-style: italic; font-size: 50px; }
 
