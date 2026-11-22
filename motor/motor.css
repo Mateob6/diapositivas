@@ -82,6 +82,9 @@ body.desplazar .boton-tema { top: 24px; right: 24px; }
 .portada > .sub b { color: var(--tinta); }
 :where(.portada) > :where(.pie) { margin-top: 110px; }
 .portada > .pie { font: 400 26px/1.3 var(--sans); color: var(--tinta-2); }
+/* títulos abreviados del autor, debajo del nombre (regla del 22 nov; los pone clase.py portada desde herramientas/autor.json) */
+.portada > .titulos { font: 400 22px/1.3 var(--sans); color: var(--tinta-2); letter-spacing: .01em; }
+:where(.portada) > :where(.pie + .titulos) { margin-top: 8px; }
 .portada > .motivo { position: absolute; right: 110px; top: 240px; width: 560px; height: 600px; margin: 0; }
 hr.regla { border: 0; height: 4px; width: 1010px; background: var(--principal); border-radius: 2px; transform-origin: left; }
 

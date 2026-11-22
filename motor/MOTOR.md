@@ -37,6 +37,7 @@ uv run $C empaquetar "<carpeta>"             # el .html único, con fuentes y GS
 uv run $C motor "<carpeta>"                  # copia el motor central actual y vuelve a revisar
 uv run $C pdf "<carpeta>"            # el PDF de la clase (una diapositiva por página, estado final)
 uv run $C publicar "<carpeta>"       # al sitio público, en curso/unidad/clase, con su PDF; Materiales se actualiza solo
+uv run $C cursos                     # sube cursos.json (los cursos y sus unidades) y reconstruye Materiales
 uv run $C estado                             # lista las clases y si su motor está al día
 ```
 
@@ -48,7 +49,7 @@ uv run $C estado                             # lista las clases y si su motor es
   - Todo queda en `revision/informe.md`, `revision/hoja-NN.png` y `revision/capturas/`. Tarda unos 10 segundos con 26 diapositivas.
 - **`pdf`** imprime la clase con Chrome sin ventana sobre `index.html?imprimir`: todas las diapositivas en su estado final (sin atenuar), una por página de 1920 × 1080, con el texto seleccionable y los enlaces activos. Deja `<Clase> (diapositivas).pdf` en la carpeta de la clase.
 - **`publicar`** lee `<carpeta>/publicacion.json` (curso, unidad, clase, orden, resumen y resumen_en, rutas_anteriores; la plantilla está en `plantilla/publicacion.json`) y valida curso y unidad contra `herramientas/cursos.json`, el registro de cursos con sus unidades en español e inglés. Si el curso no está, se agrega ahí primero. Después:
-  - copia `diapositivas/` y el PDF a `curso/unidad/clase/` del repositorio público [Mateob6/diapositivas](https://github.com/Mateob6/diapositivas) (copia local en `diapositivas-web/publicacion/`). Cada semestre la clase se reemplaza en la misma dirección;
+  - copia `diapositivas/`, el PDF y dos miniaturas (`miniatura.webp` y `miniatura-oscura.webp`, 960 × 540, de la diapositiva que dice `miniatura` en `publicacion.json`; por defecto la 2) a `curso/unidad/clase/` del repositorio público [Mateob6/diapositivas](https://github.com/Mateob6/diapositivas) (copia local en `diapositivas-web/publicacion/`). Cada semestre la clase se reemplaza en la misma dirección;
   - rehace `clases.json` y copia `cursos.json`, deja un desvío en cada ruta anterior y en la portada del sitio, que lleva a https://mateob6.github.io/materials;
   - sube los cambios, espera a que GitHub Pages sirva el índice nuevo y pide la reconstrucción del perfil (`gh workflow run deploy.yml -R Mateob6/Mateob6.github.io`). La página Materiales del perfil lee esos dos archivos al construirse.
   La dirección no lleva la universidad ni el semestre, y antes de publicar se revisa que no haya datos de estudiantes ni rutas del disco. Lo que se publica es la presentación y su PDF; el `.html` único no se ofrece para descargar.
@@ -97,7 +98,7 @@ El `index.html` de una clase enlaza, en este orden:
 ```
 
 - **El contenido se centra** en el espacio que queda bajo el título, un poco por encima del centro. Con `class="diapositiva arriba"` queda pegado al título.
-- **Portada.** `<section class="diapositiva portada">` con `p.antetitulo`, `h1`, `hr.regla`, `p.sub` y `p.pie`; `h1.largo` para títulos largos y `.motivo` para una figura a la derecha.
+- **Portada.** `<section class="diapositiva portada">` con `p.antetitulo` (**el curso**, obligatorio), `h1`, `hr.regla`, `p.sub`, `p.pie` (el nombre) y `p.titulos` (**los títulos abreviados**, obligatorio); `h1.largo` para títulos largos y `.motivo` para una figura a la derecha. El curso y los títulos los pone `clase.py portada` desde `publicacion.json`, `cursos.json` y `herramientas/autor.json`; `revisar` avisa si faltan o no coinciden.
 - **Pregunta grande.** `<p class="pregunta">`, que entra palabra por palabra. Las variables van en `<span class="subraya x">` o `y`, y el subrayado se dibuja.
 - **Composición.** `.columnas` reparte en columnas iguales (`style="--n:3"`) o con medidas propias (`style="--plantilla: 620px 1fr"`). `.pila` apila con separación y `.abajo` empuja un elemento al fondo.
 
