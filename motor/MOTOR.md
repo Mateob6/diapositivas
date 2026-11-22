@@ -128,7 +128,7 @@ La marca de cada diapositiva del Word base (skill `contenido-clase`) dice qué e
 | dos columnas | `<div class="columnas">` |
 | cita de autor | `<blockquote class="cita"><p>…</p><cite>Autor (año, p. N)</cite></blockquote>` |
 | burbujas de diálogo | `<ol class="bloque burbujas">` con `data-quien` en cada `li` |
-| recuadro | `<p class="recuadro">` (`secundario` para el otro tono) |
+| recuadro | `<p class="recuadro">` (`secundario` para el otro tono). Debajo de una fila de cajas, flechas, etapas, anillos o línea de tiempo horizontal **va centrado solo** (regla del 22 nov); en cualquier otro lugar queda alineado a la izquierda |
 | subíndices | `H<sub>0</sub>`, `μ<sub>1</sub>`. **Nunca los subíndices Unicode** (₀, ₁): las fuentes no los traen y en los títulos con serif «H₀» sale como «Ho» |
 | diagrama geométrico | `<svg class="diagrama" viewBox="0 0 1640 H">` escrito a mano (ver abajo) |
 | figura del motor, video, lámina | `<figure class="medio"><img o video o iframe><figcaption>` |

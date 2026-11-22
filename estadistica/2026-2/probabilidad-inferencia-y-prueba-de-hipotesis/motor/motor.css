@@ -110,6 +110,8 @@ hr.regla { border: 0; height: 4px; width: 1010px; background: var(--principal); 
 .recuadro { background: var(--principal-tinte); border-left: 8px solid var(--principal); border-radius: 0 10px 10px 0; padding: 22px 30px; max-width: 1320px; }
 :where(.diapositiva) .recuadro, :where(.diapositiva) p.recuadro { font: 400 32px/1.4 var(--sans); }
 .recuadro.secundario { background: var(--secundario-tinte); border-left-color: var(--secundario); }
+/* debajo de una fila de cajas, flechas, etapas, anillos o línea de tiempo, el recuadro va centrado (decisión del 22 nov) */
+:where(.bloque.cajas, .bloque.etapas, .bloque.flechas, .bloque.anillos, .bloque.linea-tiempo:not(.vertical)) ~ .recuadro { margin-inline: auto; }
 
 /* ---------- cifra grande ---------- */
 .cifra { font: 500 112px/1 var(--mono); letter-spacing: -.03em; }
