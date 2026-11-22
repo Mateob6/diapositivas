@@ -36,6 +36,11 @@ svg.galton { width: 900px; }
 .galton .letra-gal { font: 600 22px var(--sans); }
 .galton .l-si { fill: var(--principal); }
 .galton .l-no { fill: var(--secundario); }
+.galton .res-gal { font: 600 26px var(--sans); fill: var(--tinta); }
+/* D10 · el deslizador de la probabilidad de acertar, debajo de la máquina */
+#test .prob-control { gap: 18px; }
+#test .prob-control .rotulo-control { max-width: 170px; }
+#test .prob-control .extremo { font: 400 24px var(--sans); color: var(--tinta-2); }
 
 /* ── D12 · la curva normal ── */
 svg.normal { width: 1440px; margin-inline: auto; }

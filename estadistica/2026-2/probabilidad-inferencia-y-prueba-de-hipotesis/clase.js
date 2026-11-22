@@ -16,6 +16,7 @@ const M = window.Motor, DAT = window.DATOS;
 if (!M || !M.anim || !DAT) return;
 const A = M.anim, S = M.svg, MOV = M.mov, fmt = M.fmt;
 const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const texto = (padre, x, y, t, clase = '', attrs = {}) => {
   const e = S('text', Object.assign({ x, y, class: clase }, attrs), padre);
   e.textContent = t;
@@ -64,13 +65,16 @@ M.diapositiva('moneda', {
 });
 
 /* ═════════ D9 y D10 · máquina de Galton (monedas y test respondido al azar) ═════════ */
-/* La misma máquina sirve para las dos diapositivas: cambian la semilla, las marcas de cada clavo y el rótulo del eje. */
-function maquina(id, { semilla, si, no, rotulo }) {
-  const G = {};
+/* La misma máquina sirve para las dos diapositivas: cambian la semilla, las marcas de cada clavo, el rótulo del eje,
+   la unidad del resultado y, en el test, la curva (binomial exacta) y el deslizador de la probabilidad de acertar.
+   Pasos: 1 a 3, tres personas una por una (con resultados distintos); 4, cien; 5, mil y la curva. */
+const dbinom = (k, n, p) => comb(n, k) * p ** k * (1 - p) ** (n - k);
+function maquina(id, { semilla, si, no, rotulo, unidad, curva = 'normal', PMAX = 0.27, ALTO = 210, control = false }) {
+  const G = { unidad, curva, control, marcas: [si, no] };
   M.diapositiva(id, {
     preparar(el) {
       const svg = $('svg.galton', el);
-      const X0 = 820, DX = 72, Y0 = 40, DY = 30, FILAS = 10, BASE = 600, ALTO = 210, PMAX = 0.27, YB = 352;
+      const X0 = 820, DX = 72, Y0 = 40, DY = 30, FILAS = 10, BASE = 600, YB = 352;
       const xk = k => X0 + (k - 5) * DX;
       Object.assign(G, { X0, DX, Y0, DY, FILAS, BASE, ALTO, PMAX, YB, xk });
       G.clavos = [];
@@ -81,50 +85,53 @@ function maquina(id, { semilla, si, no, rotulo }) {
       G.barras = Array.from({ length: 11 }, (_, k) => S('rect', { x: xk(k) - 26, y: BASE, width: 52, height: 0, class: 'barra' }, svg));
       G.nums = Array.from({ length: 11 }, (_, k) => texto(svg, xk(k), BASE + 28, k));
       G.nums.push(texto(svg, X0, BASE + 58, rotulo, 'rot'));
-      const pts = [];
-      for (let x = -0.5; x <= 10.5001; x += .05) pts.push([xk(x), BASE - dnorm(x, 5, Math.sqrt(2.5)) / PMAX * ALTO]);
-      G.campana = S('path', { d: camino(pts), class: 'campana' }, svg);
+      G.campana = S('path', { d: curvaDe(G, .5), class: 'campana' }, svg);
       G.capa = S('g', {}, svg);
-      /* 1.000 bolas con semilla fija: 1 = derecha (cara o acierto), 0 = izquierda (sello o error) */
+      /* 1.000 personas con semilla fija: un número al azar por clavo; va a la derecha (cara o acierto) si es menor que p */
       const r = mulberry32(semilla);
-      G.caminos = Array.from({ length: 1000 }, () => Array.from({ length: FILAS }, () => (r() < .5 ? 1 : 0)));
-      const conteos = (a, b) => { const c = Array(11).fill(0); G.caminos.slice(a, b).forEach(cm => c[cm.reduce((s, v) => s + v, 0)]++); return c; };
+      G.u = Array.from({ length: 1000 }, () => Array.from({ length: FILAS }, () => r()));
+      G.caminos = G.u.map(f => f.map(v => (v < .5 ? 1 : 0)));
+      const suma = cm => cm.reduce((a, v) => a + v, 0);
+      const conteos = (a, b) => { const c = Array(11).fill(0); G.caminos.slice(a, b).forEach(cm => c[suma(cm)]++); return c; };
       G.p100 = conteos(0, 100).map(c => c / 100);
       G.p1000 = conteos(0, 1000).map(c => c / 1000);
+      /* las tres personas de los pasos 1 a 3: las primeras con resultados distintos entre sí */
+      G.solos = [];
+      const vistos = new Set();
+      for (let i = 0; i < 1000 && G.solos.length < 3; i++) { const k = suma(G.caminos[i]); if (!vistos.has(k)) { vistos.add(k); G.solos.push(i); } }
+      $$('[data-resultado]', el).forEach(e => { e.textContent = resultado(G, suma(G.caminos[G.solos[+e.dataset.resultado]])); });
+      if (control) {
+        G.rango = $('input.prob', el); G.cifraP = $('.prob-valor', el);
+        G.rango.addEventListener('input', () => ajustarProb(G, +G.rango.value));
+        G.rango.addEventListener('change', () => G.rango.blur());
+      }
     },
     entrada(el, tl) {
       G.capa.innerHTML = '';
-      G.cont = Array(11).fill(0);
       alturas(G, Array(11).fill(0));
+      if (G.control) reiniciarProb(G);
       A.ocultarTrazo(G.campana);
       tl.fromTo(G.clavos, { opacity: 0 }, { opacity: 1, duration: .3, stagger: .006 }, .3);
       tl.fromTo([...G.divisores, ...G.nums], { opacity: 0 }, { opacity: 1, duration: .4 }, .7);
       A.dibujar(G.eje, tl, .6, .8);
     },
     pasos: [
-      /* 1 · una bola lenta, con lo que pasa en cada clavo */
-      (el, tl) => {
-        const cm = G.caminos[0], seg = .36;
-        soltar(G, cm, tl, .2, seg, false);
-        let h = 0;
-        cm.forEach((c, r) => {
-          const x = G.X0 + (h - r / 2) * G.DX, y = G.Y0 + r * G.DY;
-          const l = texto(G.capa, x + (c ? 30 : -30), y - 6, c ? si : no, 'letra-gal ' + (c ? 'l-si' : 'l-no'));
-          tl.fromTo(l, { opacity: 0 }, { opacity: 1, duration: .15 }, .2 + (r + 1) * seg - .1);
-          h += c;
-        });
-      },
-      /* 2 · caen 100 bolas y el histograma crece con cada una */
+      /* 1 a 3 · una persona a la vez, con lo que pasa en cada clavo y su resultado */
+      (el, tl) => persona(G, tl, 0, .36),
+      (el, tl) => persona(G, tl, 1, .24),
+      (el, tl) => persona(G, tl, 2, .24),
+      /* 4 · caen 100 bolas y el histograma crece con cada una */
       (el, tl) => {
         tl.to(G.capa.children, { opacity: 0, duration: .3 }, 0);
-        G.cont = Array(11).fill(0);
+        const cont = Array(11).fill(0);
         for (let i = 0; i < 100; i++) {
           const t0 = .3 + i * .035, seg = .085;
           const { k } = soltar(G, G.caminos[i], tl, t0, seg, true);
-          tl.call(() => { G.cont[k]++; alturas(G, G.cont.map(c => c / 100)); }, null, t0 + (G.FILAS + 1) * seg);
+          tl.call(() => { cont[k]++; alturas(G, cont.map(c => c / 100)); }, null, t0 + (G.FILAS + 1) * seg);
         }
+        tl.call(() => alturas(G, G.p100), null, .3 + 99 * .035 + (G.FILAS + 1) * .085 + .01);
       },
-      /* 3 · caen 1.000 (se dibuja una muestra) y aparece la campana */
+      /* 5 · caen 1.000 (se dibuja una muestra) y aparece la curva */
       (el, tl) => {
         for (let i = 0; i < 160; i++) soltar(G, G.caminos[100 + i], tl, i * .016, .07, true);
         const o = { t: 0 };
@@ -134,8 +141,71 @@ function maquina(id, { semilla, si, no, rotulo }) {
     ]
   });
 }
-maquina('galton', { semilla: 2026, si: 'C', no: 'S', rotulo: 'Número de caras' });
-maquina('test', { semilla: 2027, si: '+1', no: '0', rotulo: 'Puntaje (número de aciertos)' });
+maquina('galton', { semilla: 2026, si: 'C', no: 'S', rotulo: 'Número de caras', unidad: ['cara', 'caras'] });
+maquina('test', { semilla: 2027, si: '+1', no: '0', rotulo: 'Puntaje (número de aciertos)', unidad: ['punto', 'puntos'],
+                  curva: 'binomial', PMAX: 0.40, ALTO: 236, control: true });
+const resultado = (G, k) => `${k} ${k === 1 ? G.unidad[0] : G.unidad[1]}`;
+/* una persona: los anteriores se atenúan, la bola baja despacio con su marca en cada clavo y al llegar dice su resultado */
+function persona(G, tl, n, seg) {
+  if (n > 0) {
+    tl.to($$('.letra-gal, .res-gal', G.capa), { opacity: 0, duration: .3 }, 0);
+    tl.to($$('.bola', G.capa), { opacity: .35, duration: .3 }, 0);
+  }
+  const cm = G.caminos[G.solos[n]], t0 = .3;
+  const { k } = soltar(G, cm, tl, t0, seg, false);
+  let h = 0;
+  cm.forEach((c, r) => {
+    const x = G.X0 + (h - r / 2) * G.DX, y = G.Y0 + r * G.DY;
+    const marca = texto(G.capa, x + (c ? 30 : -30), y - 6, c ? G.marcas[0] : G.marcas[1], 'letra-gal ' + (c ? 'l-si' : 'l-no'));
+    tl.fromTo(marca, { opacity: 0 }, { opacity: 1, duration: .15 }, t0 + (r + 1) * seg - .1);
+    h += c;
+  });
+  const res = texto(G.capa, G.xk(k), G.YB + 46, resultado(G, k), 'res-gal');
+  tl.fromTo(res, { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: .35 }, t0 + (G.FILAS + 1) * seg);
+}
+/* la curva: la normal (monedas) o la binomial exacta con probabilidad p, suavizada sin pasarse (test) */
+function curvaDe(G, p) {
+  const { xk, BASE, PMAX, ALTO } = G;
+  if (G.curva === 'normal') {
+    const pts = [];
+    for (let x = -0.5; x <= 10.5001; x += .05) pts.push([xk(x), BASE - dnorm(x, 5, Math.sqrt(2.5)) / PMAX * ALTO]);
+    return camino(pts);
+  }
+  const y = Array.from({ length: 11 }, (_, k) => dbinom(k, 10, p));
+  /* interpolación cúbica monótona (Fritsch y Carlson): no baja de 0 ni inventa picos */
+  const d = y.slice(1).map((v, k) => v - y[k]);
+  const m = y.map((_, k) => (k === 0 ? d[0] : k === 10 ? d[9] : (d[k - 1] * d[k] <= 0 ? 0 : (d[k - 1] + d[k]) / 2)));
+  for (let k = 0; k < 10; k++) {
+    if (d[k] === 0) { m[k] = m[k + 1] = 0; continue; }
+    const a = m[k] / d[k], b = m[k + 1] / d[k], t = a * a + b * b;
+    if (t > 9) { const s3 = 3 / Math.sqrt(t); m[k] = s3 * a * d[k]; m[k + 1] = s3 * b * d[k]; }
+  }
+  const pts = [];
+  for (let k = 0; k < 10; k++) for (let j = 0; j < 12; j++) {
+    const t = j / 12, t2 = t * t, t3 = t2 * t;
+    const v = (2 * t3 - 3 * t2 + 1) * y[k] + (t3 - 2 * t2 + t) * m[k] + (-2 * t3 + 3 * t2) * y[k + 1] + (t3 - t2) * m[k + 1];
+    pts.push([xk(k + t), BASE - Math.max(v, 0) / PMAX * ALTO]);
+  }
+  pts.push([xk(10), BASE - y[10] / PMAX * ALTO]);
+  return camino(pts);
+}
+/* el deslizador del test: la probabilidad de acertar cada pregunta */
+function reiniciarProb(G) {
+  G.p = .5;
+  G.rango.value = .5;
+  G.cifraP.textContent = fmt(.5, 2);
+  G.campana.setAttribute('d', curvaDe(G, .5));
+}
+function ajustarProb(G, p) {
+  G.p = p;
+  G.cifraP.textContent = fmt(p, 2);
+  const c = Array(11).fill(0);
+  G.u.forEach(f => { c[f.reduce((a, v) => a + (v < p ? 1 : 0), 0)]++; });
+  alturas(G, c.map(x => x / 1000));
+  G.campana.setAttribute('d', curvaDe(G, p));
+  G.campana.style.strokeDasharray = 'none';
+  G.campana.style.strokeDashoffset = 0;
+}
 function alturas(G, props) {
   props.forEach((p, k) => {
     const h = p / G.PMAX * G.ALTO;

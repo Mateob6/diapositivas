@@ -144,7 +144,7 @@
     <p class="recuadro" data-paso="2">La regla equivale a una <b>frecuencia relativa teórica</b>, porque divide los casos favorables entre el total de casos posibles <b>antes</b> de realizar el experimento.</p>
   </section>
 
-  <!-- 9 Concepto · máquina de Galton (clase.js) · proceso por clic · 3 -->
+  <!-- 9 Concepto · máquina de Galton (clase.js) · proceso por clic · 5 (tres bolas una por una, 100 y 1.000) -->
   <section class="diapositiva arriba" id="galton">
     <h2>La máquina de Galton</h2>
     <div class="columnas centradas" style="--plantilla: minmax(0, 1fr) 900px">
@@ -152,15 +152,15 @@
         <li>Cada clavo es una <b>moneda</b>.</li>
         <li>Si sale cara, la bola va a la derecha, y si sale sello, a la izquierda.</li>
         <li>Cada bola pasa por diez clavos, así que es como lanzar <b>diez monedas</b> y contar las caras.</li>
-        <li data-paso="3">Los resultados <b>centrales</b> (4, 5 o 6 caras) son los más frecuentes.</li>
-        <li data-paso="3">Los <b>extremos</b> (0 o 10 caras) son muy poco frecuentes.</li>
-        <li data-paso="3">Con muchas bolas, el histograma se aproxima a una curva en forma de <b>campana</b>.</li>
+        <li data-paso="5">Los resultados <b>centrales</b> (4, 5 o 6 caras) son los más frecuentes.</li>
+        <li data-paso="5">Los <b>extremos</b> (0 o 10 caras) son muy poco frecuentes.</li>
+        <li data-paso="5">Con muchas bolas, el histograma se aproxima a una curva en forma de <b>campana</b>.</li>
       </ul>
       <svg class="fig galton" viewBox="380 0 880 670" aria-label="Máquina de Galton con el histograma de caras"></svg>
     </div>
   </section>
 
-  <!-- 10 Concepto · la misma máquina con un test respondido al azar (clase.js) · proceso por clic · 3 -->
+  <!-- 10 Concepto · la misma máquina con un test respondido al azar (clase.js) · proceso por clic · 7 + deslizador de la probabilidad -->
   <section class="diapositiva arriba" id="test">
     <h2>Un test de 10 preguntas respondido al azar</h2>
     <div class="columnas centradas" style="--plantilla: minmax(0, 1fr) 780px">
@@ -171,13 +171,23 @@
           <li>La casilla donde cae la bola es su <b>puntaje total</b>, de 0 a 10.</li>
         </ul>
         <div class="relevo">
-          <p class="recuadro" data-paso="1"><b>Un estudiante.</b> No podemos predecir su puntaje exacto, pero vemos cómo se construye pregunta por pregunta.</p>
-          <p class="recuadro" data-paso="2"><b>100 estudiantes.</b> Es como aplicar el test a un curso completo que responde al azar. La mayoría queda en el medio.</p>
-          <p class="recuadro" data-paso="3"><b>1.000 estudiantes.</b> Los puntajes <b>centrales</b> (4, 5 o 6 aciertos) son los más frecuentes y los <b>extremos</b> (0 o 10) son muy poco frecuentes.</p>
-          <p class="recuadro" data-paso="4">¿Cuándo sospechamos que alguien <b>no</b> respondió al azar?</p>
+          <p class="recuadro" data-paso="1"><b>Un estudiante.</b> No podemos predecir su puntaje exacto, pero vemos cómo se construye pregunta por pregunta. Saca <b data-resultado="0"></b>.</p>
+          <p class="recuadro" data-paso="2"><b>Otro estudiante.</b> Responde igual, al azar, y saca <b data-resultado="1"></b>. El puntaje cambia de una persona a otra.</p>
+          <p class="recuadro" data-paso="3"><b>Un tercer estudiante.</b> Saca <b data-resultado="2"></b>. Con tres personas todavía no se ve ningún patrón.</p>
+          <p class="recuadro" data-paso="4"><b>100 estudiantes.</b> Es como aplicar el test a un curso completo que responde al azar. La mayoría queda en el medio.</p>
+          <p class="recuadro" data-paso="5"><b>1.000 estudiantes.</b> Los puntajes <b>centrales</b> (4, 5 o 6 aciertos) son los más frecuentes y los <b>extremos</b> (0 o 10) son muy poco frecuentes.</p>
+          <p class="recuadro" data-paso="6"><b>¿Y si el test es fácil o difícil?</b> Si la probabilidad de acertar es alta, los puntajes se amontonan arriba; si es baja, abajo. En los dos casos la distribución queda <b>sesgada</b>, es decir, asimétrica.</p>
+          <p class="recuadro" data-paso="7">¿Cuándo sospechamos que alguien <b>no</b> respondió al azar?</p>
         </div>
       </div>
-      <svg class="fig galton" viewBox="380 0 880 670" aria-label="Máquina de Galton con el histograma de puntajes"></svg>
+      <div class="pila">
+        <svg class="fig galton" viewBox="380 0 880 670" aria-label="Máquina de Galton con el histograma de puntajes"></svg>
+        <div class="control en-fila prob-control" data-paso="6"><span class="rotulo-control">Probabilidad de acertar cada pregunta</span>
+          <div class="cifra mediana prob-valor">0,50</div>
+          <span class="extremo">Difícil</span>
+          <input type="range" class="deslizador prob" min="0.1" max="0.9" step="0.05" value="0.5" aria-label="Probabilidad de acertar cada pregunta">
+          <span class="extremo">Fácil</span></div>
+      </div>
     </div>
   </section>
 
