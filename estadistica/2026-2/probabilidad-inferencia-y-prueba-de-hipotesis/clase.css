@@ -108,7 +108,7 @@ svg.normal { width: 1440px; margin-inline: auto; }
 /* ── D19 · las reglas ── */
 .tabla.regla th:nth-child(1) { width: 31%; }
 .tabla.regla th:nth-child(2) { width: 25%; }
-.tabla.regla td.mono { font-size: 36px; }
+.tabla.regla .signo { font-weight: 600; padding: 0 .15em; }
 
 /* ── D21 · resultado descriptivo y resultado inferencial ── */
 #resultados .tabla { font-size: 32px; margin: 6px 0 24px; }
