@@ -1,12 +1,12 @@
 /* clase.js: las figuras propias de la clase 13 (probabilidad, inferencia y prueba de hipótesis).
    Va después del motor y de datos/clase13.js. Cada figura se registra con Motor.diapositiva por el id de su section:
-     moneda (D4)    diez monedas que caen: 9 caras y 1 sello
-     galton (D8)    máquina de Galton con el histograma de caras debajo
-     test (D9)      la misma máquina: un test de 10 preguntas respondido al azar (+1 si acierta, 0 si falla)
-     normal (D11)   ejemplos de la curva normal que rotan solos
-     memoria (D13)  curvas de memoria de jóvenes y mayores, con la diferencia movible
-     binomial (D22) barras de 0 a 10 sellos con las colas sombreadas
-     azar (D23)     curvas de los grupos arriba y curva del azar con el área abajo
+     moneda (D5)    diez monedas que caen: 9 caras y 1 sello
+     galton (D9)    máquina de Galton con el histograma de caras debajo
+     test (D10)     la misma máquina: un test de 10 preguntas respondido al azar (+1 si acierta, 0 si falla)
+     normal (D12)   ejemplos de la curva normal que rotan solos
+     memoria (D14)  curvas de memoria de jóvenes y mayores, con la diferencia movible
+     binomial (D23) barras de 0 a 10 sellos con las colas sombreadas
+     azar (D24)     curvas de los grupos arriba y curva del azar con el área abajo
    Cada paso es una línea de tiempo de GSAP: el modo instantáneo (retroceder, ?estatico, ?prueba) deja el estado final.
    Los colores van por clases de CSS (clase.css), nunca escritos aquí.
    Si algo de aquí sirve para otras clases, se sube al motor central (diapositivas-web/motor/). */
@@ -37,7 +37,7 @@ const comb = (n, k) => { let c = 1; for (let i = 1; i <= k; i++) c = c * (n - k 
 const binom = (n, k) => comb(n, k) / 2 ** n;
 const camino = (pts) => pts.map(([x, y], i) => (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join(' ');
 
-/* ═════════ D4 · monedas ═════════ */
+/* ═════════ D5 · monedas ═════════ */
 const MON = {};
 M.diapositiva('moneda', {
   preparar(el) {
@@ -63,7 +63,7 @@ M.diapositiva('moneda', {
   ]
 });
 
-/* ═════════ D8 y D9 · máquina de Galton (monedas y test respondido al azar) ═════════ */
+/* ═════════ D9 y D10 · máquina de Galton (monedas y test respondido al azar) ═════════ */
 /* La misma máquina sirve para las dos diapositivas: cambian la semilla, las marcas de cada clavo y el rótulo del eje. */
 function maquina(id, { semilla, si, no, rotulo }) {
   const G = {};
@@ -157,7 +157,7 @@ function soltar(G, cm, tl, t0, seg, fugaz) {
   return { bola, k: h };
 }
 
-/* ═════════ D11 · la curva normal, con ejemplos que rotan solos ═════════ */
+/* ═════════ D12 · la curva normal, con ejemplos que rotan solos ═════════ */
 const NOR = {};
 M.diapositiva('normal', {
   preparar(el) {
@@ -231,7 +231,7 @@ function detenerNormal() {
   if (NOR.puntos) gsap.killTweensOf(NOR.puntos);
 }
 
-/* ═════════ curvas de los grupos (D13 y D23): jóvenes y mayores ═════════ */
+/* ═════════ curvas de los grupos (D14 y D24): jóvenes y mayores ═════════ */
 function curvasGrupos(svg, { izq = 60, der = 1060, base = 400, alto = 300, titulo = true }) {
   const { jovenes: J, mayores: Y } = DAT.memoria;
   const lo = 40, hi = 112, px = v => izq + (v - lo) / (hi - lo) * (der - izq);
@@ -288,7 +288,7 @@ function conectar(el, c) {
 }
 const REAL = DAT.memoria.jovenes.M - DAT.memoria.mayores.M;
 
-/* ═════════ D13 · memoria y edad: ¿real o azar? ═════════ */
+/* ═════════ D14 · memoria y edad: ¿real o azar? ═════════ */
 const MEM = {};
 M.diapositiva('memoria', {
   preparar(el) {
@@ -308,7 +308,7 @@ M.diapositiva('memoria', {
   ]
 });
 
-/* ═════════ D22 · barras de 0 a 10 sellos (la misma moneda del ejemplo 1) ═════════ */
+/* ═════════ D23 · barras de 0 a 10 sellos (la misma moneda del ejemplo 1) ═════════ */
 const BIN = {};
 M.diapositiva('binomial', {
   preparar(el) {
@@ -349,7 +349,7 @@ function marcar(tl, k, colas) {
   tl.call(() => BIN.barras.forEach((b, i) => b.classList.toggle('marcada', colas.includes(i))), null, .3);
 }
 
-/* ═════════ D23 · ¿dónde cae? curvas de los grupos y curva del azar ═════════ */
+/* ═════════ D24 · ¿dónde cae? curvas de los grupos y curva del azar ═════════ */
 const AZ = {};
 M.diapositiva('azar', {
   preparar(el) {
