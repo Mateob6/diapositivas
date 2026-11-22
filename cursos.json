@@ -12,5 +12,32 @@
    {"numero": 2, "slug": "u2-analisis-descriptivo", "es": "El análisis descriptivo de datos", "en": "Descriptive data analysis"},
    {"numero": 3, "slug": "u3-analisis-inferencial", "es": "El análisis inferencial", "en": "Inferential analysis"}
   ]
+ },
+ "analisis-integrado": {
+  "nombre": "Análisis Integrado de Datos",
+  "perfil": "Análisis Integrado de Datos",
+  "dominio": 0,
+  "descripcion": {
+   "es": "Análisis cuantitativo de un proyecto de investigación aplicada, del plan de análisis a la discusión de resultados.",
+   "en": "Quantitative analysis of an applied research project, from the analysis plan to the discussion of results."
+  },
+  "unidades": [
+   {"numero": 1, "slug": "u1-metodologia-estadistica", "es": "Metodología estadística", "en": "Statistical methodology"},
+   {"numero": 2, "slug": "u2-analisis-en-jamovi", "es": "Análisis de datos en jamovi", "en": "Data analysis in jamovi"},
+   {"numero": 3, "slug": "u3-escritura-y-discusion", "es": "Escritura y discusión de resultados", "en": "Writing and discussing results"}
+  ]
+ },
+ "aprendizaje": {
+  "nombre": "Psicología del Aprendizaje",
+  "perfil": "Psicología del Aprendizaje",
+  "dominio": 2,
+  "descripcion": {
+   "es": "Teorías del aprendizaje, de las perspectivas conductual y cognitiva a las socioculturales, y su aplicación en contextos educativos.",
+   "en": "Learning theories, from behavioral and cognitive to sociocultural perspectives, and their application in educational settings."
+  },
+  "unidades": [
+   {"numero": 1, "slug": "u1-procesos-conductuales-y-cognitivos", "es": "Procesos conductuales y cognitivos de aprendizaje", "en": "Behavioral and cognitive learning processes"},
+   {"numero": 2, "slug": "u2-procesos-socioculturales", "es": "Procesos socioculturales de aprendizaje en contextos educativos", "en": "Sociocultural learning processes in educational settings"}
+  ]
  }
 }
