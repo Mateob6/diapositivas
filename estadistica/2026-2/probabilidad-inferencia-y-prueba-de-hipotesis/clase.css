@@ -49,8 +49,13 @@ svg.normal { width: 1440px; margin-inline: auto; }
 .normal .banda-1 { fill: var(--principal-tinte); }
 .normal .banda-2 { fill: var(--principal-tinte); fill-opacity: .45; }
 .normal .media { stroke: var(--principal); stroke-width: 3; stroke-dasharray: 8 8; }
+.normal .linea-desvio { stroke: var(--tinta-2); stroke-width: 2.5; stroke-dasharray: 6 8; }
+.normal .rot-desvio { font: 500 24px var(--sans); fill: var(--tinta-2); }
+.normal .guia { fill: none; stroke: var(--tinta); stroke-width: 2.5; }
+.normal .rot-centro { font: 600 28px var(--sans); fill: var(--tinta); }
+.normal .rot-centro.x { fill: var(--principal); }
 .normal .rot-banda { font: 600 26px var(--sans); fill: var(--principal); }
-.normal .rot-media { font: italic 400 30px var(--serif); fill: var(--principal); }
+.normal .rot-media { font: 600 24px var(--sans); fill: var(--principal); }
 .normal .titulo-ej { font: 600 30px var(--sans); fill: var(--tinta); }
 .normal .nota-fig { font: italic 400 24px var(--sans); fill: var(--tinta-2); }
 

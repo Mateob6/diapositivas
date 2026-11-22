@@ -232,21 +232,27 @@ const NOR = {};
 M.diapositiva('normal', {
   preparar(el) {
     const svg = $('svg.normal', el);
-    const N = 200, ZMIN = -3.5, AZ = .25, BINS = 28, X0 = 120, ANCHO = 1400, BASE = 380, PASO = 11, R = 5;
+    const N = 200, ZMIN = -3.5, AZ = .25, BINS = 28, X0 = 120, ANCHO = 1400, BASE = 360, PASO = 11, R = 5;
     const xz = z => X0 + (z - ZMIN) / 7 * ANCHO;
     Object.assign(NOR, { N, BASE, xz });
+    /* paso 4 · las bandas de ±1 y ±2 DE */
     const bandas = S('g', { class: 'bandas' }, svg);
-    S('rect', { x: xz(-2), y: 34, width: xz(2) - xz(-2), height: BASE + 6 - 34, class: 'banda-2' }, bandas);
-    S('rect', { x: xz(-1), y: 34, width: xz(1) - xz(-1), height: BASE + 6 - 34, class: 'banda-1' }, bandas);
-    S('path', { d: `M${xz(0)} ${BASE + 6} V32`, class: 'media' }, bandas);
-    texto(bandas, xz(-1) + 12, 56, '68 %', 'rot-banda inicio');
-    texto(bandas, xz(-2) + 12, 56, '95 %', 'rot-banda inicio');
-    texto(bandas, xz(0), 14, 'M', 'rot-media');
+    S('rect', { x: xz(-2), y: 76, width: xz(2) - xz(-2), height: BASE + 6 - 76, class: 'banda-2' }, bandas);
+    S('rect', { x: xz(-1), y: 76, width: xz(1) - xz(-1), height: BASE + 6 - 76, class: 'banda-1' }, bandas);
+    texto(bandas, xz(-1) + 12, 98, '68 %', 'rot-banda inicio');
+    texto(bandas, xz(-2) + 12, 98, '95 %', 'rot-banda inicio');
     NOR.bandas = bandas;
+    /* paso 2 · líneas verticales en la media y en ±1 y ±2 DE */
+    NOR.desvios = [-2, -1, 0, 1, 2].map(z => {
+      const g = S('g', { class: z ? 'desvio' : 'en-media' }, svg);
+      S('path', { d: `M${xz(z)} ${BASE + 6} V76`, class: z ? 'linea-desvio' : 'media' }, g);
+      texto(g, xz(z), 58, z ? `${z > 0 ? '+' : '−'}${Math.abs(z)} DE` : 'Media', z ? 'rot-desvio' : 'rot-media');
+      return g;
+    });
     NOR.eje = S('path', { d: `M${X0} ${BASE + 6} H${X0 + ANCHO}`, class: 'eje' }, svg);
     NOR.ticks = [-3, -2, -1, 0, 1, 2, 3].map(z => texto(svg, xz(z), BASE + 34, ''));
-    NOR.titulo = texto(svg, X0 + ANCHO, 24, '', 'titulo-ej fin');
-    texto(svg, 0, 24, 'Datos simulados, con fines ilustrativos', 'nota-fig inicio');
+    NOR.titulo = texto(svg, X0 + ANCHO, 18, '', 'titulo-ej fin');
+    texto(svg, 0, 18, 'Datos simulados, con fines ilustrativos', 'nota-fig inicio');
     const capa = S('g', {}, svg);
     /* una muestra de 300 por ejemplo, con semilla fija; cada punto se apila en su barra del histograma */
     NOR.muestras = DAT.normales.map((ej, e) => {
@@ -262,13 +268,21 @@ M.diapositiva('normal', {
     const pts = [];
     for (let z = ZMIN; z <= 3.5001; z += .05) pts.push([xz(z), BASE - N * AZ * dnorm(z) * PASO]);
     NOR.campana = S('path', { d: camino(pts), class: 'campana' }, svg);
+    /* paso 3 · media, mediana y moda: tres rótulos con líneas que apuntan a la misma cima */
+    const cima = [xz(0), BASE - N * AZ * dnorm(0) * PASO];
+    NOR.centro = S('g', { class: 'centro' }, svg);
+    NOR.guias = [['Media', 112, 'x'], ['Mediana', 154, ''], ['Moda', 196, '']].map(([t, y, c]) => {
+      const l = S('path', { d: `M${xz(0) + 300} ${y} L${cima[0] + 10} ${cima[1] - 4}`, class: 'guia' }, NOR.centro);
+      texto(NOR.centro, xz(0) + 316, y, t, 'rot-centro inicio ' + c);
+      return l;
+    });
   },
   entrada(el, tl) {
     detenerNormal();
     rotular(0);
     NOR.e = 0;
     A.ocultarTrazo(NOR.campana);
-    gsap.set(NOR.bandas, { opacity: 0 });
+    gsap.set([NOR.bandas, ...NOR.desvios, NOR.centro], { opacity: 0 });
     A.dibujar(NOR.eje, tl, .3, .8);
     tl.fromTo([...NOR.ticks, NOR.titulo], { opacity: 0 }, { opacity: 1, duration: .4 }, .6);
     NOR.puntos.forEach((p, i) => {
@@ -278,7 +292,20 @@ M.diapositiva('normal', {
     if (!M.instantaneo) tl.call(() => { NOR.reloj = gsap.delayedCall(3.2, rotar); }, null, 2.6);
   },
   pasos: [
+    /* 1 · la campana */
     (el, tl) => { A.dibujar(NOR.campana, tl, 0, 1.2); },
+    /* 2 · la media y las desviaciones: primero la media y luego hacia afuera */
+    (el, tl) => {
+      [2, 1, 3, 0, 4].forEach((i, k) => tl.fromTo(NOR.desvios[i], { opacity: 0 }, { opacity: 1, duration: .4 }, k * .18));
+    },
+    /* 3 · media, mediana y moda apuntan al mismo punto; las desviaciones bajan */
+    (el, tl) => {
+      tl.to([0, 1, 3, 4].map(i => NOR.desvios[i]), { opacity: .3, duration: .4 }, 0);
+      tl.set(NOR.centro, { opacity: 1 }, 0);
+      NOR.guias.forEach((l, k) => A.dibujar(l, tl, .2 + k * .25, .5));
+      tl.fromTo($$('text', NOR.centro), { opacity: 0 }, { opacity: 1, duration: .3, stagger: .25 }, .1);
+    },
+    /* 4 · las bandas de ±1 y ±2 DE */
     (el, tl) => { tl.fromTo(NOR.bandas, { opacity: 0 }, { opacity: 1, duration: .6 }, 0); }
   ],
   detener: () => detenerNormal()
